@@ -131,14 +131,14 @@ export default function Hero({ featuredProject, setCursorState }) {
         </div>
       </div>
 
-      {/* Hero Cinematic Video Player (Plays in-place with sound!) */}
+      {/* Hero Cinematic Video Player */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="relative w-full aspect-video md:aspect-[21/9] bg-black overflow-hidden border border-[#EAEAEA] group cursor-pointer"
         onClick={toggleSound}
-        onMouseEnter={() => setCursorState && setCursorState({ text: isMuted ? 'UNMUTE' : 'MUTE', active: true })}
+        onMouseEnter={() => setCursorState && setCursorState({ text: isMuted ? 'SOUND' : 'MUTE', active: true })}
         onMouseLeave={() => setCursorState && setCursorState({ text: '', active: false })}
       >
         <video
@@ -187,23 +187,13 @@ export default function Hero({ featuredProject, setCursorState }) {
               {isPlaying ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
             </button>
 
-            {/* Sound Toggle */}
+            {/* Sound Toggle - Sleek minimal round button */}
             <button
               onClick={toggleSound}
-              className="px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-white text-black font-satoshi font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-lg hover:bg-neutral-100 transition-colors"
-              aria-label={isMuted ? 'Unmute preview' : 'Mute preview'}
+              className="p-2 sm:p-2.5 rounded-full bg-white text-black hover:bg-neutral-200 transition-colors shadow-lg flex items-center justify-center"
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
-              {isMuted ? (
-                <>
-                  <VolumeX size={15} />
-                  <span>TAP FOR SOUND</span>
-                </>
-              ) : (
-                <>
-                  <Volume2 size={15} />
-                  <span>SOUND ON</span>
-                </>
-              )}
+              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
             </button>
           </div>
         </div>

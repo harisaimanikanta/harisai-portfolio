@@ -133,10 +133,10 @@ export default function ProjectCard({
       className={`group flex flex-col transition-all ${
         isPortrait ? 'col-span-1' : isLandscape ? 'col-span-1 sm:col-span-2' : 'col-span-1'
       }`}
-      onMouseEnter={() => setCursorState && setCursorState({ text: isAudioActive ? 'PAUSE' : 'AUDIO', active: true })}
+      onMouseEnter={() => setCursorState && setCursorState({ text: isAudioActive ? 'PAUSE' : 'PLAY', active: true })}
       onMouseLeave={() => setCursorState && setCursorState({ text: '', active: false })}
     >
-      {/* Video Container - Click plays in place with audio! */}
+      {/* Video Container - Clean, unobstructed */}
       <div
         onClick={handleCardClick}
         className={`relative w-full overflow-hidden bg-black border ${
@@ -164,33 +164,23 @@ export default function ProjectCard({
           className="w-full h-full object-cover"
         />
 
-        {/* Top Badges */}
+        {/* Minimal Corner Badges */}
         <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-10">
           <span className="px-2 py-0.5 bg-white/95 text-black font-inter text-[10px] font-bold tracking-wider uppercase shadow-sm">
             {project.category}
           </span>
 
-          {isAudioActive ? (
-            <span className="px-2 py-0.5 bg-black text-white font-inter text-[10px] font-bold tracking-wider uppercase flex items-center gap-1 shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-              <span>SOUND ON</span>
-            </span>
-          ) : (
+          <div className="flex items-center gap-1.5">
+            {isAudioActive && (
+              <span className="p-1.5 rounded-full bg-black/90 text-white shadow-sm flex items-center justify-center">
+                <Volume2 size={12} />
+              </span>
+            )}
             <span className="px-2 py-0.5 bg-black/80 text-white font-mono text-[10px] font-medium tracking-wider">
               {project.durationFormatted}
             </span>
-          )}
-        </div>
-
-        {/* Floating Tap to Play Sound Banner when Muted */}
-        {!isAudioActive && (
-          <div className="absolute inset-0 bg-transparent hover:bg-black/15 transition-colors flex items-center justify-center pointer-events-none">
-            <div className="px-3.5 py-1.5 bg-white/95 text-black text-xs font-satoshi font-bold tracking-wider uppercase shadow-lg flex items-center gap-2 transform transition-transform group-hover:scale-105">
-              <Volume2 size={14} />
-              <span>TAP FOR AUDIO</span>
-            </div>
           </div>
-        )}
+        </div>
 
         {/* In-Place Audio Controls Bar (Appears when active or hovered) */}
         <div
@@ -223,20 +213,10 @@ export default function ProjectCard({
 
               <button
                 onClick={handleMuteToggle}
-                className="p-1 hover:text-neutral-300 transition-colors flex items-center gap-1"
+                className="p-1 hover:text-neutral-300 transition-colors"
                 aria-label={isAudioActive ? 'Mute' : 'Unmute'}
               >
-                {isAudioActive ? (
-                  <>
-                    <Volume2 size={15} />
-                    <span className="text-[10px] font-mono tracking-wider">UNMUTED</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX size={15} />
-                    <span className="text-[10px] font-mono tracking-wider">MUTED</span>
-                  </>
-                )}
+                {isAudioActive ? <Volume2 size={15} /> : <VolumeX size={15} />}
               </button>
             </div>
 
