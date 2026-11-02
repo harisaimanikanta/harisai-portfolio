@@ -10,7 +10,6 @@ function servePortfolioMedia(server) {
     }
 
     try {
-      // Strip /media/ and clean query params
       const cleanUrl = req.url.replace(/^\/media\//, '').split('?')[0];
       const decodedPath = decodeURIComponent(cleanUrl);
       const fullPath = path.join(__dirname, 'Editing portfolio edits', decodedPath);
@@ -54,6 +53,7 @@ function servePortfolioMedia(server) {
 }
 
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
     {
