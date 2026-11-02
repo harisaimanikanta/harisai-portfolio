@@ -10,13 +10,11 @@ import Experience from './components/Experience.jsx';
 import Services from './components/Services.jsx';
 import Software from './components/Software.jsx';
 import Contact from './components/Contact.jsx';
-import ProjectModal from './components/ProjectModal.jsx';
 import CustomCursor from './components/CustomCursor.jsx';
 
 import { projects, getFeaturedProject } from './data/projects.js';
 
 export default function App() {
-  const [selectedProject, setSelectedProject] = useState(null);
   const [cursorState, setCursorState] = useState({ text: '', active: false });
   const [activeSection, setActiveSection] = useState('hero');
 
@@ -67,18 +65,9 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleOpenModal = (project) => {
-    setSelectedProject(project);
-    setCursorState({ text: '', active: false });
-  };
-
-  const handleCloseModal = () => {
-    setSelectedProject(null);
-  };
-
   return (
     <div className="min-h-screen bg-white text-black selection:bg-black selection:text-white font-sans antialiased">
-      {/* Sophisticated Custom Cursor */}
+      {/* Desktop Custom Cursor */}
       <CustomCursor cursorState={cursorState} />
 
       {/* Navigation */}
@@ -88,19 +77,16 @@ export default function App() {
       <main>
         <Hero
           featuredProject={featuredProject}
-          onOpenModal={handleOpenModal}
           setCursorState={setCursorState}
         />
 
         <Showreel
           project={featuredProject}
-          onOpenModal={handleOpenModal}
           setCursorState={setCursorState}
         />
 
         <SelectedWork
           projects={projects}
-          onOpenModal={handleOpenModal}
           setCursorState={setCursorState}
         />
 
@@ -114,14 +100,6 @@ export default function App() {
 
         <Contact />
       </main>
-
-      {/* Fullscreen Video Case Study Modal */}
-      <ProjectModal
-        project={selectedProject}
-        isOpen={Boolean(selectedProject)}
-        onClose={handleCloseModal}
-        onSelectProject={setSelectedProject}
-      />
     </div>
   );
 }

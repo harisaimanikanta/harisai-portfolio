@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProjectCard from './ProjectCard.jsx';
 import { categories } from '../data/projects.js';
 
-export default function SelectedWork({ projects, onOpenModal, setCursorState }) {
+export default function SelectedWork({ projects, setCursorState }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [activeAudioId, setActiveAudioId] = useState(null);
 
   // Compute counts for categories
   const categoryCounts = useMemo(() => {
@@ -21,6 +22,10 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
     return projects.filter((p) => p.category === selectedCategory);
   }, [projects, selectedCategory]);
 
+  const handleToggleAudio = (projectId) => {
+    setActiveAudioId(projectId);
+  };
+
   return (
     <section id="work" className="py-16 sm:py-24 md:py-36 max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12">
       {/* Section Header */}
@@ -35,7 +40,7 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
         </div>
 
         <p className="font-inter text-xs sm:text-sm md:text-base text-[#777777] max-w-md">
-          A curated collection of commercial cuts, motion design, AI avatars, viral retention reels, and documentary storytelling.
+          Tap any video to play with audio right here on this page. All motion graphics, AI films, and commercial edits play directly in-place.
         </p>
       </div>
 
@@ -64,7 +69,7 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
         })}
       </div>
 
-      {/* Grid of video cards */}
+      {/* Grid of in-place playing video cards */}
       <motion.div
         layout
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-6 lg:gap-8 items-start"
@@ -75,7 +80,8 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
               key={project.id}
               project={project}
               index={index}
-              onOpenModal={onOpenModal}
+              isAudioActive={activeAudioId === project.id}
+              onToggleAudio={handleToggleAudio}
               setCursorState={setCursorState}
             />
           ))}

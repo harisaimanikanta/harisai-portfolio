@@ -1,16 +1,30 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Play, Volume2, VolumeX } from 'lucide-react';
+import { ArrowDown, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
-export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
+export default function Hero({ featuredProject, setCursorState }) {
   const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef(null);
 
   const toggleSound = (e) => {
     e.stopPropagation();
     if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
+      const newMuted = !videoRef.current.muted;
+      videoRef.current.muted = newMuted;
+      setIsMuted(newMuted);
+    }
+  };
+
+  const togglePlay = (e) => {
+    if (e) e.stopPropagation();
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play();
+      setIsPlaying(true);
     }
   };
 
@@ -117,14 +131,14 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
         </div>
       </div>
 
-      {/* Hero Cinematic Video Preview Container */}
+      {/* Hero Cinematic Video Player (Plays in-place with sound!) */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="relative w-full aspect-video md:aspect-[21/9] bg-black overflow-hidden border border-[#EAEAEA] group cursor-pointer"
-        onClick={() => onOpenModal && onOpenModal(featuredProject)}
-        onMouseEnter={() => setCursorState && setCursorState({ text: 'PLAY', active: true })}
+        onClick={toggleSound}
+        onMouseEnter={() => setCursorState && setCursorState({ text: isMuted ? 'UNMUTE' : 'MUTE', active: true })}
         onMouseLeave={() => setCursorState && setCursorState({ text: '', active: false })}
       >
         <video
@@ -137,14 +151,14 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
           playsInline
           webkit-playsinline="true"
           preload="metadata"
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
 
         {/* Top Badges */}
         <div className="absolute top-3 left-3 sm:top-5 sm:left-5 flex items-center gap-2 sm:gap-3">
-          <span className="px-2.5 py-1 bg-white/95 text-black font-inter text-[10px] font-bold tracking-widest uppercase">
+          <span className="px-2.5 py-1 bg-white/95 text-black font-inter text-[10px] font-bold tracking-widest uppercase shadow-sm">
             FEATURED SHOWCASE
           </span>
           <span className="hidden sm:inline-block px-2.5 py-1 bg-black/75 text-white font-inter text-[10px] font-medium tracking-wider">
@@ -152,8 +166,8 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
           </span>
         </div>
 
-        {/* Bottom Bar: Title & Controls */}
-        <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 flex items-end justify-between text-white gap-3">
+        {/* Bottom Bar: Title & In-Place Controls */}
+        <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 flex items-end justify-between text-white gap-3 z-10">
           <div className="max-w-xl">
             <span className="text-[10px] sm:text-xs font-inter font-medium text-white/80 uppercase tracking-widest block mb-1">
               {featuredProject?.category} — {featuredProject?.client}
@@ -164,19 +178,33 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Play / Pause */}
             <button
-              onClick={toggleSound}
-              aria-label={isMuted ? 'Unmute preview' : 'Mute preview'}
-              className="p-2 sm:p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors"
+              onClick={togglePlay}
+              className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors"
+              aria-label={isPlaying ? 'Pause' : 'Play'}
             >
-              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+              {isPlaying ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
             </button>
 
-            <div className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 bg-white text-black font-satoshi font-bold text-[11px] sm:text-xs tracking-wider uppercase group-hover:bg-neutral-100 transition-colors">
-              <Play size={12} fill="currentColor" />
-              <span className="hidden sm:inline">WATCH FULL EDIT</span>
-              <span className="sm:hidden">PLAY</span>
-            </div>
+            {/* Sound Toggle */}
+            <button
+              onClick={toggleSound}
+              className="px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-white text-black font-satoshi font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-lg hover:bg-neutral-100 transition-colors"
+              aria-label={isMuted ? 'Unmute preview' : 'Mute preview'}
+            >
+              {isMuted ? (
+                <>
+                  <VolumeX size={15} />
+                  <span>TAP FOR SOUND</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 size={15} />
+                  <span>SOUND ON</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </motion.div>
