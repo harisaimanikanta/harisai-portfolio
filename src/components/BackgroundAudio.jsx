@@ -1,109 +1,99 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Volume2, VolumeX, Music } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 
 export default function BackgroundAudio({ isVideoPlaying }) {
   const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isManualMuted, setIsManualMuted] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   const BASE = import.meta.env.BASE_URL.endsWith('/')
     ? import.meta.env.BASE_URL
     : `${import.meta.env.BASE_URL}/`;
   const audioSrc = `${BASE}audio/bg-music.mp3`;
 
-  // Initialize and handle autoplay
+  // Autoplay immediately without waiting for tap
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Optimized volume for ambient background score
     audio.volume = 0.30;
+    audio.muted = false;
 
-    // Attempt direct autoplay right away
-    const tryPlay = () => {
-      if (isManualMuted || isVideoPlaying) return;
-      audio.play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          // Browser prevented autoplay before gesture - unlock on first interaction
-          setIsPlaying(false);
-        });
+    const startAudio = () => {
+      if (isMuted || isVideoPlaying) return;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            // If browser blocks unmuted audio before first gesture,
+            // unlock and play on any immediate micro-interaction (scroll, mousemove, touch)
+          });
+      }
     };
 
-    tryPlay();
+    startAudio();
 
-    // Unlock audio on first user interaction anywhere on the window
-    const handleFirstGesture = () => {
-      setUserInteracted(true);
-      if (!isManualMuted && !isVideoPlaying) {
+    // Unlock on any first interaction (mouse move, touch, scroll, click, keydown)
+    const handleMicroInteraction = () => {
+      if (!isMuted && !isVideoPlaying && audio.paused) {
         audio.play()
           .then(() => setIsPlaying(true))
           .catch(() => {});
       }
-      cleanupListeners();
     };
 
-    const gestureEvents = [
-      'click',
+    const events = [
+      'mousemove',
+      'pointermove',
+      'pointerdown',
       'touchstart',
       'touchend',
       'scroll',
       'wheel',
-      'keydown',
-      'pointerdown',
-      'pointermove',
-      'mousemove'
+      'click',
+      'keydown'
     ];
 
-    const cleanupListeners = () => {
-      gestureEvents.forEach(evt => {
-        window.removeEventListener(evt, handleFirstGesture);
-      });
-    };
-
-    gestureEvents.forEach(evt => {
-      window.addEventListener(evt, handleFirstGesture, { passive: true, once: true });
+    events.forEach((evt) => {
+      window.addEventListener(evt, handleMicroInteraction, { passive: true, once: true });
     });
 
     return () => {
-      cleanupListeners();
+      events.forEach((evt) => {
+        window.removeEventListener(evt, handleMicroInteraction);
+      });
     };
-  }, []);
+  }, [isMuted, isVideoPlaying]);
 
-  // When a video starts playing or pauses, coordinate background music
+  // When a video starts playing or finishes, synchronize background soundtrack
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (isVideoPlaying) {
-      // STOP background song immediately when any video plays
       audio.pause();
       setIsPlaying(false);
-    } else {
-      // Resume background music if not manually stopped
-      if (!isManualMuted) {
-        audio.play()
-          .then(() => setIsPlaying(true))
-          .catch(() => {});
-      }
+    } else if (!isMuted) {
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
     }
-  }, [isVideoPlaying, isManualMuted]);
+  }, [isVideoPlaying, isMuted]);
 
-  // Handle manual stop / play toggle
-  const togglePlayStop = () => {
+  // Toggle mute / unmute
+  const handleToggleMute = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    setUserInteracted(true);
-    if (isPlaying) {
+    if (!isMuted && isPlaying) {
       audio.pause();
       setIsPlaying(false);
-      setIsManualMuted(true);
+      setIsMuted(true);
     } else {
-      setIsManualMuted(false);
+      setIsMuted(false);
       if (!isVideoPlaying) {
         audio.play()
           .then(() => setIsPlaying(true))
@@ -114,7 +104,7 @@ export default function BackgroundAudio({ isVideoPlaying }) {
 
   return (
     <>
-      {/* Background Audio Element */}
+      {/* Background Audio Stream - Autoplays */}
       <audio
         ref={audioRef}
         src={audioSrc}
@@ -123,15 +113,15 @@ export default function BackgroundAudio({ isVideoPlaying }) {
         preload="auto"
       />
 
-      {/* Sleek Minimal Floating Soundtrack Pill */}
+      {/* Floating Mute / Unmute Control (No "tap to play", just automatic soundtrack with mute option) */}
       <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40">
         <button
-          onClick={togglePlayStop}
+          onClick={handleToggleMute}
           className={`flex items-center gap-2.5 px-3 py-2 bg-white/95 hover:bg-white text-black border border-[#EAEAEA] hover:border-black rounded-full shadow-lg backdrop-blur-md transition-all group ${
             isPlaying ? 'ring-1 ring-black/10' : 'opacity-85 hover:opacity-100'
           }`}
-          title={isPlaying ? 'Stop background soundtrack' : 'Play background soundtrack'}
-          aria-label={isPlaying ? 'Stop soundtrack' : 'Play soundtrack'}
+          title={isMuted ? 'Unmute soundtrack' : 'Mute soundtrack'}
+          aria-label={isMuted ? 'Unmute soundtrack' : 'Mute soundtrack'}
         >
           {/* Animated sound wave bars */}
           <div className="flex items-end gap-0.5 h-3.5 w-3.5 shrink-0 py-0.5">
@@ -154,15 +144,15 @@ export default function BackgroundAudio({ isVideoPlaying }) {
 
           <div className="flex flex-col text-left">
             <span className="font-satoshi text-[10px] font-bold tracking-widest text-black uppercase leading-tight">
-              {isVideoPlaying ? 'VIDEO PLAYING' : isPlaying ? 'SOUNDTRACK: PLAYING' : 'SOUNDTRACK: STOPPED'}
+              {isVideoPlaying ? 'VIDEO PLAYING' : isMuted ? 'SOUNDTRACK MUTED' : 'SOUNDTRACK ACTIVE'}
             </span>
             <span className="font-mono text-[9px] text-[#777777] uppercase tracking-wider leading-none">
-              {isPlaying ? 'TAP TO STOP' : 'TAP TO PLAY'} • DEAVRA
+              {isMuted ? 'CLICK TO UNMUTE' : 'CLICK TO MUTE'} • FEAR SONG
             </span>
           </div>
 
           <div className="ml-1 pl-2 border-l border-[#EAEAEA] text-[#777777] group-hover:text-black transition-colors">
-            {isPlaying ? <Volume2 size={13} /> : <VolumeX size={13} />}
+            {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
           </div>
         </button>
       </div>

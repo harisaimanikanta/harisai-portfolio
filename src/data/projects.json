@@ -429,40 +429,6 @@
     "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-16.mp4"
   },
   {
-    "id": "project-17",
-    "title": "The Beast Formula — Documentary Motion Graphics",
-    "originalFilename": "Beast doctumetary.mp4",
-    "folder": "Youtube Doctumentary Motion Grapics",
-    "category": "Documentary & Storytelling",
-    "client": "YouTube Docu-Series",
-    "description": "In-depth documentary-style visual breakdown detailing the empire mechanics of MrBeast, featuring custom kinetic charts, timeline animations, and cinematic archival pacing.",
-    "tags": [
-      "Documentary",
-      "YouTube Motion Graphics",
-      "Storytelling"
-    ],
-    "techniques": [
-      "Map & Chart Animations",
-      "Asset Compositing",
-      "Deep Sound Design",
-      "Visual Metaphors",
-      "Archival Pacing"
-    ],
-    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-17.mp4",
-    "thumbnailUrl": "./thumbnails/project-17.jpg",
-    "width": 1920,
-    "height": 1080,
-    "aspectRatio": "16:9",
-    "orientation": "landscape",
-    "duration": 345.1,
-    "durationFormatted": "5:45",
-    "featured": true,
-    "gdriveId": "10WI4-i_J_12J8bJXikyIx3LD6WYWt9wM",
-    "gdrivePreviewUrl": "https://drive.google.com/file/d/10WI4-i_J_12J8bJXikyIx3LD6WYWt9wM/preview",
-    "localVideoUrl": "/media/Youtube Doctumentary Motion Grapics/Beast doctumetary.mp4",
-    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-17.mp4"
-  },
-  {
     "id": "project-01",
     "title": "Semicon Labs — Dussehra VLSI Campaign",
     "originalFilename": "This Dussehra_ Unlock Your VLSI Learning at a Special Price_ __Ready to take your VLSI skills to the next level_ __Semicon Labs brings you an exclusive Duss(.mp4",
@@ -527,5 +493,39 @@
     "gdrivePreviewUrl": "https://drive.google.com/file/d/19E08L9CKWTdeThOoPVDCcX8OZp1SHpNJ/preview",
     "localVideoUrl": "/media/Ai Influcer - Ai Videos/Your VLSI Journey Starts Here___Get ready to level up your VLSI skills with the Semicon Labs Pro Plan_ __✅ 4 Months of VLSI Lab Access_✅ 300 Lab Hours fo.mp4",
     "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-02.mp4"
+  },
+  {
+    "id": "project-17",
+    "title": "The Beast Formula — Documentary Motion Graphics",
+    "originalFilename": "Beast doctumetary.mp4",
+    "folder": "Youtube Doctumentary Motion Grapics",
+    "category": "Documentary & Storytelling",
+    "client": "YouTube Docu-Series",
+    "description": "In-depth documentary-style visual breakdown detailing the empire mechanics of MrBeast, featuring custom kinetic charts, timeline animations, and cinematic archival pacing.",
+    "tags": [
+      "Documentary",
+      "YouTube Motion Graphics",
+      "Storytelling"
+    ],
+    "techniques": [
+      "Map & Chart Animations",
+      "Asset Compositing",
+      "Deep Sound Design",
+      "Visual Metaphors",
+      "Archival Pacing"
+    ],
+    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-17.mp4",
+    "thumbnailUrl": "./thumbnails/project-17.jpg",
+    "width": 1920,
+    "height": 1080,
+    "aspectRatio": "16:9",
+    "orientation": "landscape",
+    "duration": 345.1,
+    "durationFormatted": "5:45",
+    "featured": true,
+    "gdriveId": "10WI4-i_J_12J8bJXikyIx3LD6WYWt9wM",
+    "gdrivePreviewUrl": "https://drive.google.com/file/d/10WI4-i_J_12J8bJXikyIx3LD6WYWt9wM/preview",
+    "localVideoUrl": "/media/Youtube Doctumentary Motion Grapics/Beast doctumetary.mp4",
+    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-17.mp4"
   }
 ]

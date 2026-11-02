@@ -16,8 +16,8 @@ export const categories = [
   'All',
   'Product & Motion Design',
   'Talking Head',
-  'Documentary & Storytelling',
-  'AI Films'
+  'AI Films',
+  'Documentary & Storytelling'
 ];
 
 export const getFeaturedProject = () => {
