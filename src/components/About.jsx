@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 export default function About() {
   const stats = [
     { label: 'YEARS EXPERIENCE', value: '2+' },
-    { label: 'COMPLETED EDITS', value: '150+' },
+    { label: 'COMPLETED EDITS', value: '500+' },
     { label: 'NICHES MASTERED', value: '8+' },
     { label: 'FRAME ACCURACY', value: '100%' },
   ];
