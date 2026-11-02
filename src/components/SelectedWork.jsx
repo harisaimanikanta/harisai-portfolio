@@ -3,9 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProjectCard from './ProjectCard.jsx';
 import { categories } from '../data/projects.js';
 
-export default function SelectedWork({ projects, setCursorState }) {
+export default function SelectedWork({
+  projects,
+  activeAudioId,
+  onToggleAudio,
+  setCursorState
+}) {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [activeAudioId, setActiveAudioId] = useState(null);
 
   // Compute counts for categories
   const categoryCounts = useMemo(() => {
@@ -22,10 +26,6 @@ export default function SelectedWork({ projects, setCursorState }) {
     return projects.filter((p) => p.category === selectedCategory);
   }, [projects, selectedCategory]);
 
-  const handleToggleAudio = (projectId) => {
-    setActiveAudioId(projectId);
-  };
-
   return (
     <section id="work" className="py-16 sm:py-24 md:py-36 max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12">
       {/* Section Header */}
@@ -40,7 +40,7 @@ export default function SelectedWork({ projects, setCursorState }) {
         </div>
 
         <p className="font-inter text-xs sm:text-sm md:text-base text-[#777777] max-w-md">
-          Tap any video to play with audio right here on this page. All motion graphics, AI films, and commercial edits play directly in-place.
+          Tap any video to play with full sound directly on this page. All motion graphics, AI films, and commercial edits play seamlessly in-place.
         </p>
       </div>
 
@@ -81,7 +81,7 @@ export default function SelectedWork({ projects, setCursorState }) {
               project={project}
               index={index}
               isAudioActive={activeAudioId === project.id}
-              onToggleAudio={handleToggleAudio}
+              onToggleAudio={onToggleAudio}
               setCursorState={setCursorState}
             />
           ))}

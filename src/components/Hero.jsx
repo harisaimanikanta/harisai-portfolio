@@ -1,30 +1,78 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
-export default function Hero({ featuredProject, setCursorState }) {
+export default function Hero({
+  featuredProject,
+  isActiveAudio,
+  onActivateAudio,
+  setCursorState
+}) {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef(null);
 
+  // Sync with global audio state
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!isActiveAudio) {
+      video.muted = true;
+      setIsMuted(true);
+    } else {
+      video.muted = false;
+      setIsMuted(false);
+    }
+  }, [isActiveAudio]);
+
   const toggleSound = (e) => {
-    e.stopPropagation();
-    if (videoRef.current) {
-      const newMuted = !videoRef.current.muted;
-      videoRef.current.muted = newMuted;
-      setIsMuted(newMuted);
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isMuted) {
+      if (onActivateAudio) onActivateAudio('hero');
+      video.muted = false;
+      setIsMuted(false);
+      if (!isPlaying) {
+        video.play().then(() => setIsPlaying(true));
+      }
+    } else {
+      video.muted = true;
+      setIsMuted(true);
+      if (isActiveAudio && onActivateAudio) {
+        onActivateAudio(null);
+      }
     }
   };
 
   const togglePlay = (e) => {
     if (e) e.stopPropagation();
-    if (!videoRef.current) return;
+    const video = videoRef.current;
+    if (!video) return;
+
     if (isPlaying) {
-      videoRef.current.pause();
+      video.pause();
       setIsPlaying(false);
+      if (isActiveAudio && onActivateAudio) {
+        onActivateAudio(null);
+      }
     } else {
-      videoRef.current.play();
-      setIsPlaying(true);
+      if (!isMuted && onActivateAudio) {
+        onActivateAudio('hero');
+      }
+      video.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
+    }
+  };
+
+  // Prevent keyboard forward / rewind
+  const handleKeyDown = (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
     }
   };
 
@@ -131,7 +179,7 @@ export default function Hero({ featuredProject, setCursorState }) {
         </div>
       </div>
 
-      {/* Hero Cinematic Video Player */}
+      {/* Hero Cinematic Video Player - No Seeking */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -151,6 +199,8 @@ export default function Hero({ featuredProject, setCursorState }) {
           playsInline
           webkit-playsinline="true"
           preload="metadata"
+          onKeyDown={handleKeyDown}
+          tabIndex={-1}
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
         />
 

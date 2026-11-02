@@ -11,12 +11,15 @@ import Services from './components/Services.jsx';
 import Software from './components/Software.jsx';
 import Contact from './components/Contact.jsx';
 import CustomCursor from './components/CustomCursor.jsx';
+import BackgroundAudio from './components/BackgroundAudio.jsx';
 
 import { projects, getFeaturedProject } from './data/projects.js';
 
 export default function App() {
   const [cursorState, setCursorState] = useState({ text: '', active: false });
   const [activeSection, setActiveSection] = useState('hero');
+  // activeAudioSource tracks which video has sound enabled: null | 'hero' | 'showreel' | 'project-XX'
+  const [activeAudioSource, setActiveAudioSource] = useState(null);
 
   const featuredProject = getFeaturedProject();
 
@@ -65,10 +68,17 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleActivateAudio = (sourceId) => {
+    setActiveAudioSource(sourceId);
+  };
+
   return (
     <div className="min-h-screen bg-white text-black selection:bg-black selection:text-white font-sans antialiased">
       {/* Desktop Custom Cursor */}
       <CustomCursor cursorState={cursorState} />
+
+      {/* Background Soundtrack Controller (Fear Song - Reduced volume, stops when any video plays) */}
+      <BackgroundAudio isVideoPlaying={Boolean(activeAudioSource)} />
 
       {/* Navigation */}
       <Navbar activeSection={activeSection} />
@@ -77,16 +87,22 @@ export default function App() {
       <main>
         <Hero
           featuredProject={featuredProject}
+          isActiveAudio={activeAudioSource === 'hero'}
+          onActivateAudio={handleActivateAudio}
           setCursorState={setCursorState}
         />
 
         <Showreel
           project={featuredProject}
+          isActiveAudio={activeAudioSource === 'showreel'}
+          onActivateAudio={handleActivateAudio}
           setCursorState={setCursorState}
         />
 
         <SelectedWork
           projects={projects}
+          activeAudioId={activeAudioSource}
+          onToggleAudio={handleActivateAudio}
           setCursorState={setCursorState}
         />
 

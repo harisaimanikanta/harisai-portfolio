@@ -82,13 +82,10 @@ export default function ProjectModal({ project, isOpen, onClose, onSelectProject
     if (dur > 0) setProgress((cur / dur) * 100);
   };
 
-  const handleSeek = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const percent = (clickX / rect.width) * 100;
-    if (videoRef.current && videoRef.current.duration) {
-      videoRef.current.currentTime = (percent / 100) * videoRef.current.duration;
-      setProgress(percent);
+  const handleKeyDown = (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
     }
   };
 
@@ -218,10 +215,10 @@ export default function ProjectModal({ project, isOpen, onClose, onSelectProject
                 className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-2 z-20"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Timeline Scrubber */}
+                {/* Passive Timeline Progress (No forwarding / rewinding allowed) */}
                 <div
-                  onClick={handleSeek}
-                  className="w-full h-2 bg-white/30 hover:h-3 transition-all cursor-pointer rounded-full overflow-hidden"
+                  className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden pointer-events-none select-none"
+                  aria-hidden="true"
                 >
                   <div className="h-full bg-white transition-all duration-75" style={{ width: `${progress}%` }} />
                 </div>

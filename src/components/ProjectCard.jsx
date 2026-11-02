@@ -71,10 +71,11 @@ export default function ProjectCard({
     if (isPlaying) {
       video.pause();
       setIsPlaying(false);
-    } else {
-      if (!isAudioActive) {
-        onToggleAudio(project.id);
+      if (isAudioActive) {
+        onToggleAudio(null);
       }
+    } else {
+      onToggleAudio(project.id);
       video.play()
         .then(() => setIsPlaying(true))
         .catch(() => {});
@@ -98,15 +99,12 @@ export default function ProjectCard({
     setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
   };
 
-  const handleSeek = (e) => {
-    e.stopPropagation();
-    const video = videoRef.current;
-    if (!video || !video.duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const pct = Math.max(0, Math.min(1, clickX / rect.width));
-    video.currentTime = pct * video.duration;
-    setProgress(pct * 100);
+  // Prevent keyboard forward / rewind (ArrowLeft / ArrowRight)
+  const handleKeyDown = (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   const handleFullscreen = (e) => {
@@ -149,7 +147,7 @@ export default function ProjectCard({
             : 'aspect-square'
         }`}
       >
-        {/* Direct Playing Video */}
+        {/* Direct Playing Video - NO controls, no seeking */}
         <video
           ref={videoRef}
           src={project.videoUrl}
@@ -161,6 +159,8 @@ export default function ProjectCard({
           webkit-playsinline="true"
           preload="metadata"
           onTimeUpdate={handleTimeUpdate}
+          onKeyDown={handleKeyDown}
+          tabIndex={-1}
           className="w-full h-full object-cover"
         />
 
@@ -189,10 +189,10 @@ export default function ProjectCard({
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Progress Bar / Scrubber */}
+          {/* Passive Non-Interactive Progress Indicator (Strictly NO forwarding / rewinding allowed) */}
           <div
-            onClick={handleSeek}
-            className="w-full h-1.5 bg-white/30 hover:h-2.5 transition-all cursor-pointer rounded-full overflow-hidden"
+            className="w-full h-1 bg-white/20 rounded-full overflow-hidden pointer-events-none select-none"
+            aria-hidden="true"
           >
             <div
               className="h-full bg-white transition-all duration-75"
@@ -221,7 +221,7 @@ export default function ProjectCard({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] text-white/80">
+              <span className="font-mono text-[10px] text-white/80 pointer-events-none select-none">
                 {currentTimeStr} / {project.durationFormatted}
               </span>
 

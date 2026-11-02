@@ -1,50 +1,110 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 
-export default function Showreel({ project, onOpenModal, setCursorState }) {
+export default function Showreel({
+  project,
+  isActiveAudio,
+  onActivateAudio,
+  setCursorState
+}) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const currentProject = project;
 
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-      setIsPlaying(false);
+  // React to global audio state
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!isActiveAudio) {
+      if (isPlaying) {
+        // Another video took audio priority or audio was deactivated
+        video.muted = true;
+        setIsMuted(true);
+      }
     } else {
-      videoRef.current.play();
-      setIsPlaying(true);
+      video.muted = false;
+      setIsMuted(false);
+    }
+  }, [isActiveAudio]);
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isPlaying) {
+      video.pause();
+      setIsPlaying(false);
+      if (isActiveAudio && onActivateAudio) {
+        onActivateAudio(null);
+      }
+    } else {
+      // User hit play: video plays and background music stops
+      if (onActivateAudio) {
+        onActivateAudio('showreel');
+      }
+      video.muted = false;
+      setIsMuted(false);
+      video.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          // If browser requires muted initial play
+          video.muted = true;
+          setIsMuted(true);
+          video.play().then(() => setIsPlaying(true));
+        });
     }
   };
 
   const toggleMute = (e) => {
     if (e) e.stopPropagation();
-    if (!videoRef.current) return;
-    videoRef.current.muted = !videoRef.current.muted;
-    setIsMuted(videoRef.current.muted);
-  };
+    const video = videoRef.current;
+    if (!video) return;
 
-  const handleTimeUpdate = () => {
-    if (!videoRef.current) return;
-    const current = videoRef.current.currentTime;
-    const total = videoRef.current.duration;
-    if (total > 0) {
-      setProgress((current / total) * 100);
+    if (isMuted) {
+      if (onActivateAudio) onActivateAudio('showreel');
+      video.muted = false;
+      setIsMuted(false);
+      if (!isPlaying) {
+        video.play().then(() => setIsPlaying(true));
+      }
+    } else {
+      video.muted = true;
+      setIsMuted(true);
+      if (isActiveAudio && onActivateAudio) {
+        onActivateAudio(null);
+      }
     }
   };
 
-  const handleSeek = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const width = rect.width;
-    const newProgress = (clickX / width) * 100;
-    if (videoRef.current && videoRef.current.duration) {
-      videoRef.current.currentTime = (newProgress / 100) * videoRef.current.duration;
-      setProgress(newProgress);
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video || !video.duration) return;
+    const current = video.currentTime;
+    const total = video.duration;
+    setProgress((current / total) * 100);
+  };
+
+  // Prevent keyboard forward / rewind (ArrowLeft / ArrowRight)
+  const handleKeyDown = (e) => {
+    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  const handleFullscreen = (e) => {
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    } else if (video.webkitEnterFullscreen) {
+      video.webkitEnterFullscreen();
     }
   };
 
@@ -77,7 +137,12 @@ export default function Showreel({ project, onOpenModal, setCursorState }) {
             preload="metadata"
             muted={isMuted}
             onTimeUpdate={handleTimeUpdate}
-            onEnded={() => setIsPlaying(false)}
+            onEnded={() => {
+              setIsPlaying(false);
+              if (isActiveAudio && onActivateAudio) onActivateAudio(null);
+            }}
+            onKeyDown={handleKeyDown}
+            tabIndex={-1}
             onClick={togglePlay}
             className="w-full h-full object-cover cursor-pointer"
           />
@@ -99,12 +164,12 @@ export default function Showreel({ project, onOpenModal, setCursorState }) {
             </div>
           )}
 
-          {/* Scrubber & Controls Bar */}
+          {/* Passive Progress & Controls Bar (Strictly NO forwarding / rewinding allowed) */}
           <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 md:p-6 bg-gradient-to-t from-black/85 via-black/45 to-transparent flex flex-col gap-2 sm:gap-3 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {/* Scrubber Bar */}
+            {/* Passive Progress Bar */}
             <div
-              onClick={handleSeek}
-              className="w-full h-1.5 sm:h-2 bg-white/30 hover:h-2.5 transition-all cursor-pointer rounded-full overflow-hidden"
+              className="w-full h-1 sm:h-1.5 bg-white/20 rounded-full overflow-hidden pointer-events-none select-none"
+              aria-hidden="true"
             >
               <div
                 className="h-full bg-white transition-all duration-75"
@@ -142,9 +207,9 @@ export default function Showreel({ project, onOpenModal, setCursorState }) {
                 </span>
 
                 <button
-                  onClick={() => onOpenModal && onOpenModal(currentProject)}
+                  onClick={handleFullscreen}
                   className="p-1 sm:p-1.5 hover:text-[#777777] transition-colors"
-                  aria-label="Fullscreen / Modal"
+                  aria-label="Fullscreen"
                 >
                   <Maximize2 size={17} />
                 </button>
