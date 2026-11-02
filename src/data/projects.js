@@ -14,10 +14,10 @@ export const projects = rawProjects.map(p => ({
 
 export const categories = [
   'All',
-  'AI Films',
   'Product & Motion Design',
   'Talking Head',
-  'Documentary & Storytelling'
+  'Documentary & Storytelling',
+  'AI Films'
 ];
 
 export const getFeaturedProject = () => {

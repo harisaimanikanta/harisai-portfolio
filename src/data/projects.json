@@ -1,71 +1,5 @@
 [
   {
-    "id": "project-01",
-    "title": "Semicon Labs — Dussehra VLSI Campaign",
-    "originalFilename": "This Dussehra_ Unlock Your VLSI Learning at a Special Price_ __Ready to take your VLSI skills to the next level_ __Semicon Labs brings you an exclusive Duss(.mp4",
-    "folder": "Ai Influcer - Ai Videos",
-    "category": "AI Films",
-    "client": "Semicon Labs",
-    "description": "Festive promo campaign showcasing VLSI lab learning with dynamic kinetic text and AI-driven presenter visuals.",
-    "tags": [
-      "AI Avatars",
-      "SaaS Promo",
-      "Visual Storytelling"
-    ],
-    "techniques": [
-      "AI Voice Sync",
-      "Motion Callouts",
-      "Kinetic Typography",
-      "Subtitling"
-    ],
-    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-01.mp4",
-    "thumbnailUrl": "./thumbnails/project-01.jpg",
-    "width": 720,
-    "height": 1280,
-    "aspectRatio": "9:16",
-    "orientation": "portrait",
-    "duration": 39.2,
-    "durationFormatted": "0:39",
-    "featured": true,
-    "gdriveId": "1TLmv7gCiS4VwmGbEvtQ_xMQrQnMzQHvF",
-    "gdrivePreviewUrl": "https://drive.google.com/file/d/1TLmv7gCiS4VwmGbEvtQ_xMQrQnMzQHvF/preview",
-    "localVideoUrl": "/media/Ai Influcer - Ai Videos/This Dussehra_ Unlock Your VLSI Learning at a Special Price_ __Ready to take your VLSI skills to the next level_ __Semicon Labs brings you an exclusive Duss(.mp4",
-    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-01.mp4"
-  },
-  {
-    "id": "project-02",
-    "title": "Semicon Labs — VLSI Pro Plan Launch",
-    "originalFilename": "Your VLSI Journey Starts Here___Get ready to level up your VLSI skills with the Semicon Labs Pro Plan_ __✅ 4 Months of VLSI Lab Access_✅ 300 Lab Hours fo.mp4",
-    "folder": "Ai Influcer - Ai Videos",
-    "category": "AI Films",
-    "client": "Semicon Labs",
-    "description": "High-energy commercial launch for 4-month professional VLSI curriculum featuring bold benefit callouts and smooth visual flow.",
-    "tags": [
-      "AI Avatars",
-      "SaaS Promo",
-      "Visual Storytelling"
-    ],
-    "techniques": [
-      "AI Voice Sync",
-      "Motion Callouts",
-      "Kinetic Typography",
-      "Subtitling"
-    ],
-    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-02.mp4",
-    "thumbnailUrl": "./thumbnails/project-02.jpg",
-    "width": 720,
-    "height": 1280,
-    "aspectRatio": "9:16",
-    "orientation": "portrait",
-    "duration": 43.3,
-    "durationFormatted": "0:43",
-    "featured": true,
-    "gdriveId": "19E08L9CKWTdeThOoPVDCcX8OZp1SHpNJ",
-    "gdrivePreviewUrl": "https://drive.google.com/file/d/19E08L9CKWTdeThOoPVDCcX8OZp1SHpNJ/preview",
-    "localVideoUrl": "/media/Ai Influcer - Ai Videos/Your VLSI Journey Starts Here___Get ready to level up your VLSI skills with the Semicon Labs Pro Plan_ __✅ 4 Months of VLSI Lab Access_✅ 300 Lab Hours fo.mp4",
-    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-02.mp4"
-  },
-  {
     "id": "project-03",
     "title": "Navratri Celebrations — Festive Offer Reveal",
     "originalFilename": "Navratri Celebrations Begin_ __Welcome the festive vibes with silver favourites that make every celebration more special. From divine pooja essentials to bea.mp4",
@@ -97,39 +31,6 @@
     "gdrivePreviewUrl": "https://drive.google.com/file/d/1oYtGDnZjp7PKawC82AIJm6B2rZvoh-3t/preview",
     "localVideoUrl": "/media/Product reveal - Offer Reveal Motion Grapics/Navratri Celebrations Begin_ __Welcome the festive vibes with silver favourites that make every celebration more special. From divine pooja essentials to bea.mp4",
     "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-03.mp4"
-  },
-  {
-    "id": "project-04",
-    "title": "Commercial Edit Series #A0",
-    "originalFilename": "A0.mp4",
-    "folder": "Talkinh Head",
-    "category": "Talking Head",
-    "client": "Agency Commercial",
-    "description": "Short-form retention-focused video edit engineered for maximum audience hold rate, punchy transitions, and kinetic typography.",
-    "tags": [
-      "Talking Head",
-      "Short-Form",
-      "Reels / TikTok"
-    ],
-    "techniques": [
-      "Hook Retention Cut",
-      "Visual Sound FX",
-      "Subtitles & Callouts",
-      "Dynamic Framing"
-    ],
-    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-04.mp4",
-    "thumbnailUrl": "./thumbnails/project-04.jpg",
-    "width": 1080,
-    "height": 1920,
-    "aspectRatio": "9:16",
-    "orientation": "portrait",
-    "duration": 40.0,
-    "durationFormatted": "0:40",
-    "featured": false,
-    "gdriveId": "1hNVg0FqEP-aGbMGTchePE9wQErY4wcPT",
-    "gdrivePreviewUrl": "https://drive.google.com/file/d/1hNVg0FqEP-aGbMGTchePE9wQErY4wcPT/preview",
-    "localVideoUrl": "/media/Talkinh Head/A0.mp4",
-    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-04.mp4"
   },
   {
     "id": "project-05",
@@ -560,5 +461,71 @@
     "gdrivePreviewUrl": "https://drive.google.com/file/d/10WI4-i_J_12J8bJXikyIx3LD6WYWt9wM/preview",
     "localVideoUrl": "/media/Youtube Doctumentary Motion Grapics/Beast doctumetary.mp4",
     "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-17.mp4"
+  },
+  {
+    "id": "project-01",
+    "title": "Semicon Labs — Dussehra VLSI Campaign",
+    "originalFilename": "This Dussehra_ Unlock Your VLSI Learning at a Special Price_ __Ready to take your VLSI skills to the next level_ __Semicon Labs brings you an exclusive Duss(.mp4",
+    "folder": "Ai Influcer - Ai Videos",
+    "category": "AI Films",
+    "client": "Semicon Labs",
+    "description": "Festive promo campaign showcasing VLSI lab learning with dynamic kinetic text and AI-driven presenter visuals.",
+    "tags": [
+      "AI Avatars",
+      "SaaS Promo",
+      "Visual Storytelling"
+    ],
+    "techniques": [
+      "AI Voice Sync",
+      "Motion Callouts",
+      "Kinetic Typography",
+      "Subtitling"
+    ],
+    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-01.mp4",
+    "thumbnailUrl": "./thumbnails/project-01.jpg",
+    "width": 720,
+    "height": 1280,
+    "aspectRatio": "9:16",
+    "orientation": "portrait",
+    "duration": 39.2,
+    "durationFormatted": "0:39",
+    "featured": true,
+    "gdriveId": "1TLmv7gCiS4VwmGbEvtQ_xMQrQnMzQHvF",
+    "gdrivePreviewUrl": "https://drive.google.com/file/d/1TLmv7gCiS4VwmGbEvtQ_xMQrQnMzQHvF/preview",
+    "localVideoUrl": "/media/Ai Influcer - Ai Videos/This Dussehra_ Unlock Your VLSI Learning at a Special Price_ __Ready to take your VLSI skills to the next level_ __Semicon Labs brings you an exclusive Duss(.mp4",
+    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-01.mp4"
+  },
+  {
+    "id": "project-02",
+    "title": "Semicon Labs — VLSI Pro Plan Launch",
+    "originalFilename": "Your VLSI Journey Starts Here___Get ready to level up your VLSI skills with the Semicon Labs Pro Plan_ __✅ 4 Months of VLSI Lab Access_✅ 300 Lab Hours fo.mp4",
+    "folder": "Ai Influcer - Ai Videos",
+    "category": "AI Films",
+    "client": "Semicon Labs",
+    "description": "High-energy commercial launch for 4-month professional VLSI curriculum featuring bold benefit callouts and smooth visual flow.",
+    "tags": [
+      "AI Avatars",
+      "SaaS Promo",
+      "Visual Storytelling"
+    ],
+    "techniques": [
+      "AI Voice Sync",
+      "Motion Callouts",
+      "Kinetic Typography",
+      "Subtitling"
+    ],
+    "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-02.mp4",
+    "thumbnailUrl": "./thumbnails/project-02.jpg",
+    "width": 720,
+    "height": 1280,
+    "aspectRatio": "9:16",
+    "orientation": "portrait",
+    "duration": 43.3,
+    "durationFormatted": "0:43",
+    "featured": true,
+    "gdriveId": "19E08L9CKWTdeThOoPVDCcX8OZp1SHpNJ",
+    "gdrivePreviewUrl": "https://drive.google.com/file/d/19E08L9CKWTdeThOoPVDCcX8OZp1SHpNJ/preview",
+    "localVideoUrl": "/media/Ai Influcer - Ai Videos/Your VLSI Journey Starts Here___Get ready to level up your VLSI skills with the Semicon Labs Pro Plan_ __✅ 4 Months of VLSI Lab Access_✅ 300 Lab Hours fo.mp4",
+    "cdnVideoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-02.mp4"
   }
 ]

@@ -180,7 +180,7 @@ export default function Showreel({
         </div>
 
         {/* Video Player Card */}
-        <div className="relative w-full aspect-video bg-black overflow-hidden group shadow-sm border border-[#EAEAEA]">
+        <div className="relative w-full aspect-video bg-black overflow-hidden rounded-xl md:rounded-2xl group shadow-sm border border-[#EAEAEA]">
           <video
             ref={videoRef}
             src={currentProject?.videoUrl}

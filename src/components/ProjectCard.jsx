@@ -204,12 +204,12 @@ export default function ProjectCard({
       onMouseEnter={() => setCursorState && setCursorState({ text: isAudioActive ? 'PAUSE' : 'PLAY', active: true })}
       onMouseLeave={() => setCursorState && setCursorState({ text: '', active: false })}
     >
-      {/* Video Container */}
+      {/* Video Container with slight rounded corners and clean subtle border */}
       <div
         onClick={handleCardClick}
-        className={`relative w-full overflow-hidden bg-black border ${
-          isAudioActive ? 'border-black ring-2 ring-black shadow-xl' : 'border-[#EAEAEA]'
-        } rounded-none transition-all duration-300 cursor-pointer ${
+        className={`relative w-full overflow-hidden bg-black border border-[#EAEAEA] rounded-xl transition-all duration-300 cursor-pointer ${
+          isAudioActive ? 'shadow-xl' : 'shadow-sm hover:border-[#CCCCCC]'
+        } ${
           isPortrait
             ? 'aspect-[9/16]'
             : isLandscape
@@ -236,7 +236,7 @@ export default function ProjectCard({
 
         {/* Minimal Corner Badges */}
         <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-10">
-          <span className="px-2 py-0.5 bg-white/95 text-black font-inter text-[10px] font-bold tracking-wider uppercase shadow-sm">
+          <span className="px-2 py-0.5 bg-white/95 text-black font-inter text-[10px] font-bold tracking-wider uppercase rounded-md shadow-sm">
             {project.category}
           </span>
 
@@ -246,7 +246,7 @@ export default function ProjectCard({
                 <Volume2 size={12} />
               </span>
             )}
-            <span className="px-2 py-0.5 bg-black/80 text-white font-mono text-[10px] font-medium tracking-wider">
+            <span className="px-2 py-0.5 bg-black/80 text-white font-mono text-[10px] font-medium tracking-wider rounded-md">
               {project.durationFormatted}
             </span>
           </div>
@@ -375,7 +375,7 @@ export default function ProjectCard({
           {project.techniques?.slice(0, 3).map((tech) => (
             <span
               key={tech}
-              className="px-2 py-0.5 bg-[#F5F5F5] border border-[#EAEAEA] text-neutral-700 font-inter text-[10px] font-medium"
+              className="px-2 py-0.5 bg-[#F5F5F5] border border-[#EAEAEA] text-neutral-700 font-inter text-[10px] font-medium rounded-md"
             >
               {tech}
             </span>

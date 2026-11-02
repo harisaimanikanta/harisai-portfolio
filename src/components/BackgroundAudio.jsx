@@ -20,7 +20,7 @@ export default function BackgroundAudio({ isVideoPlaying }) {
     // Optimized volume for ambient background score
     audio.volume = 0.30;
 
-    // Attempt direct autoplay
+    // Attempt direct autoplay right away
     const tryPlay = () => {
       if (isManualMuted || isVideoPlaying) return;
       audio.play()
@@ -28,14 +28,14 @@ export default function BackgroundAudio({ isVideoPlaying }) {
           setIsPlaying(true);
         })
         .catch(() => {
-          // Browser prevented autoplay before gesture - will resume on first interaction
+          // Browser prevented autoplay before gesture - unlock on first interaction
           setIsPlaying(false);
         });
     };
 
     tryPlay();
 
-    // Unlock audio on first user gesture anywhere on the window
+    // Unlock audio on first user interaction anywhere on the window
     const handleFirstGesture = () => {
       setUserInteracted(true);
       if (!isManualMuted && !isVideoPlaying) {
@@ -46,17 +46,27 @@ export default function BackgroundAudio({ isVideoPlaying }) {
       cleanupListeners();
     };
 
+    const gestureEvents = [
+      'click',
+      'touchstart',
+      'touchend',
+      'scroll',
+      'wheel',
+      'keydown',
+      'pointerdown',
+      'pointermove',
+      'mousemove'
+    ];
+
     const cleanupListeners = () => {
-      window.removeEventListener('click', handleFirstGesture);
-      window.removeEventListener('touchstart', handleFirstGesture);
-      window.removeEventListener('scroll', handleFirstGesture);
-      window.removeEventListener('keydown', handleFirstGesture);
+      gestureEvents.forEach(evt => {
+        window.removeEventListener(evt, handleFirstGesture);
+      });
     };
 
-    window.addEventListener('click', handleFirstGesture, { passive: true });
-    window.addEventListener('touchstart', handleFirstGesture, { passive: true });
-    window.addEventListener('scroll', handleFirstGesture, { passive: true });
-    window.addEventListener('keydown', handleFirstGesture, { passive: true });
+    gestureEvents.forEach(evt => {
+      window.addEventListener(evt, handleFirstGesture, { passive: true, once: true });
+    });
 
     return () => {
       cleanupListeners();
@@ -73,17 +83,17 @@ export default function BackgroundAudio({ isVideoPlaying }) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      // Resume background music if not manually muted
-      if (!isManualMuted && userInteracted) {
+      // Resume background music if not manually stopped
+      if (!isManualMuted) {
         audio.play()
           .then(() => setIsPlaying(true))
           .catch(() => {});
       }
     }
-  }, [isVideoPlaying, isManualMuted, userInteracted]);
+  }, [isVideoPlaying, isManualMuted]);
 
-  // Handle manual mute/unmute toggle
-  const toggleMute = () => {
+  // Handle manual stop / play toggle
+  const togglePlayStop = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -108,6 +118,7 @@ export default function BackgroundAudio({ isVideoPlaying }) {
       <audio
         ref={audioRef}
         src={audioSrc}
+        autoPlay
         loop
         preload="auto"
       />
@@ -115,12 +126,12 @@ export default function BackgroundAudio({ isVideoPlaying }) {
       {/* Sleek Minimal Floating Soundtrack Pill */}
       <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40">
         <button
-          onClick={toggleMute}
-          className={`flex items-center gap-2.5 px-3 py-2 bg-white/95 hover:bg-white text-black border border-[#EAEAEA] hover:border-black shadow-lg backdrop-blur-md transition-all group ${
-            isPlaying ? 'ring-1 ring-black/10' : 'opacity-80 hover:opacity-100'
+          onClick={togglePlayStop}
+          className={`flex items-center gap-2.5 px-3 py-2 bg-white/95 hover:bg-white text-black border border-[#EAEAEA] hover:border-black rounded-full shadow-lg backdrop-blur-md transition-all group ${
+            isPlaying ? 'ring-1 ring-black/10' : 'opacity-85 hover:opacity-100'
           }`}
-          title={isPlaying ? 'Pause background soundtrack' : 'Play background soundtrack'}
-          aria-label={isPlaying ? 'Pause soundtrack' : 'Play soundtrack'}
+          title={isPlaying ? 'Stop background soundtrack' : 'Play background soundtrack'}
+          aria-label={isPlaying ? 'Stop soundtrack' : 'Play soundtrack'}
         >
           {/* Animated sound wave bars */}
           <div className="flex items-end gap-0.5 h-3.5 w-3.5 shrink-0 py-0.5">
@@ -143,10 +154,10 @@ export default function BackgroundAudio({ isVideoPlaying }) {
 
           <div className="flex flex-col text-left">
             <span className="font-satoshi text-[10px] font-bold tracking-widest text-black uppercase leading-tight">
-              {isVideoPlaying ? 'VIDEO PLAYING' : isPlaying ? 'SOUNDTRACK ACTIVE' : 'SOUNDTRACK MUTED'}
+              {isVideoPlaying ? 'VIDEO PLAYING' : isPlaying ? 'SOUNDTRACK: PLAYING' : 'SOUNDTRACK: STOPPED'}
             </span>
             <span className="font-mono text-[9px] text-[#777777] uppercase tracking-wider leading-none">
-              FEAR SONG • LOW VOL
+              {isPlaying ? 'TAP TO STOP' : 'TAP TO PLAY'} • DEAVRA
             </span>
           </div>
 

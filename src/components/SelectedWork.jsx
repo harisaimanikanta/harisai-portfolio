@@ -54,7 +54,7 @@ export default function SelectedWork({
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-satoshi font-bold tracking-wider uppercase transition-all duration-200 border ${
+              className={`shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-satoshi font-bold tracking-wider uppercase rounded-full transition-all duration-200 border ${
                 isSelected
                   ? 'bg-black text-white border-black shadow-sm'
                   : 'bg-white text-black border-[#EAEAEA] hover:border-black hover:bg-[#F5F5F5]'
