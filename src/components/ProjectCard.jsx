@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Play, ArrowUpRight } from 'lucide-react';
+import { Play, ArrowUpRight, Volume2 } from 'lucide-react';
 
 export default function ProjectCard({
   project,
@@ -8,24 +8,43 @@ export default function ProjectCard({
   onOpenModal,
   setCursorState
 }) {
-  const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // Directly autoplay video when it scrolls into view (works on mobile & desktop without hover!)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play()
+              .then(() => setIsPlaying(true))
+              .catch(() => {});
+          } else {
+            video.pause();
+            setIsPlaying(false);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
     if (setCursorState) setCursorState({ text: 'VIEW', active: true });
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    }
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
     if (setCursorState) setCursorState({ text: '', active: false });
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
   };
 
   const isPortrait = project.orientation === 'portrait';
@@ -34,20 +53,20 @@ export default function ProjectCard({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.6, delay: (index % 4) * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.5, delay: (index % 3) * 0.06 }}
       className={`group flex flex-col cursor-pointer transition-all ${
-        isPortrait ? 'col-span-1' : isLandscape ? 'col-span-1 md:col-span-2' : 'col-span-1'
+        isPortrait ? 'col-span-1' : isLandscape ? 'col-span-1 sm:col-span-2' : 'col-span-1'
       }`}
       onClick={() => onOpenModal(project)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Video / Thumbnail Container */}
+      {/* Video / Thumbnail Container - Always directly playing */}
       <div
-        className={`relative w-full overflow-hidden bg-neutral-100 border border-[#EAEAEA] transition-all duration-500 ease-out ${
+        className={`relative w-full overflow-hidden bg-black border border-[#EAEAEA] rounded-none transition-all duration-300 ${
           isPortrait
             ? 'aspect-[9/16]'
             : isLandscape
@@ -55,75 +74,55 @@ export default function ProjectCard({
             : 'aspect-square'
         }`}
       >
-        {/* Poster Image */}
-        <img
-          src={project.thumbnailUrl}
-          alt={project.title}
-          loading="lazy"
-          onError={(e) => {
-            const fallback = `./thumbnails/${project.id}.jpg`;
-            if (e.currentTarget.src !== fallback) {
-              e.currentTarget.src = fallback;
-            }
-          }}
-          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
-            isHovered ? 'opacity-0' : 'opacity-100'
-          }`}
-        />
-
-        {/* Hover Video Stream */}
+        {/* Direct Auto-Playing Video */}
         <video
           ref={videoRef}
           src={project.videoUrl}
+          poster={project.thumbnailUrl}
+          autoPlay
           muted
           loop
           playsInline
-          preload="none"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            isHovered ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
-          }`}
+          preload="metadata"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
 
-        {/* Badges on Top */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
-          <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-black font-inter text-[10px] font-bold tracking-widest uppercase">
+        {/* Top Badges */}
+        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-10">
+          <span className="px-2 py-0.5 bg-white/95 text-black font-inter text-[10px] font-bold tracking-wider uppercase shadow-sm">
             {project.category}
           </span>
-          <span className="px-2.5 py-1 bg-black/80 backdrop-blur-sm text-white font-mono text-[10px] font-medium tracking-wider">
+          <span className="px-2 py-0.5 bg-black/80 text-white font-mono text-[10px] font-medium tracking-wider">
             {project.durationFormatted}
           </span>
         </div>
 
-        {/* Hover Action Badge on Center */}
-        <div className={`absolute inset-0 bg-black/20 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 pointer-events-none z-10 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}>
-          <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform transition-transform group-hover:scale-110">
-            <Play size={18} fill="currentColor" className="ml-0.5" />
-          </div>
-        </div>
-
-        {/* Aspect Ratio Pill at Bottom Left */}
-        <div className="absolute bottom-3 left-3 pointer-events-none z-10">
-          <span className="px-2 py-0.5 bg-black/70 text-white/90 font-mono text-[9px] uppercase tracking-wider">
+        {/* Subtle Bottom Action Bar */}
+        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-10">
+          <span className="px-2 py-0.5 bg-black/75 text-white/90 font-mono text-[9px] uppercase tracking-wider">
             {project.aspectRatio}
           </span>
+
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/95 text-black text-[10px] font-satoshi font-bold tracking-wider uppercase shadow-sm opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all">
+            <Play size={10} fill="currentColor" />
+            <span>PLAY</span>
+          </div>
         </div>
       </div>
 
-      {/* Typography Metadata Under Card */}
-      <div className="mt-4 flex flex-col gap-1.5">
+      {/* Metadata under card */}
+      <div className="mt-3.5 flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[11px] text-[#777777] uppercase tracking-wider">
+          <span className="font-mono text-[10px] sm:text-[11px] text-[#777777] uppercase tracking-wider">
             PRJ / {(index + 1).toString().padStart(2, '0')} • {project.client}
           </span>
           <ArrowUpRight
-            size={16}
-            className="text-[#777777] group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200"
+            size={15}
+            className="text-[#777777] group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
           />
         </div>
 
-        <h3 className="font-satoshi text-base md:text-lg font-bold text-black tracking-tight leading-snug group-hover:text-neutral-700 transition-colors line-clamp-2">
+        <h3 className="font-satoshi text-base sm:text-lg font-bold text-black tracking-tight leading-snug group-hover:text-neutral-700 transition-colors line-clamp-2">
           {project.title}
         </h3>
 

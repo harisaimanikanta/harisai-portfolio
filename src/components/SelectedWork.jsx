@@ -22,25 +22,25 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
   }, [projects, selectedCategory]);
 
   return (
-    <section id="work" className="py-24 md:py-36 max-w-[1440px] mx-auto px-6 md:px-12">
+    <section id="work" className="py-16 sm:py-24 md:py-36 max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12">
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 pb-8 border-b border-[#EAEAEA]">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16 pb-6 sm:pb-8 border-b border-[#EAEAEA]">
         <div>
-          <span className="font-satoshi text-xs font-bold tracking-[0.25em] text-[#777777] uppercase block mb-2">
+          <span className="font-satoshi text-xs font-bold tracking-[0.2em] sm:tracking-[0.25em] text-[#777777] uppercase block mb-1.5 sm:mb-2">
             02 / SELECTED REPERTOIRE
           </span>
-          <h2 className="font-satoshi text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-black uppercase">
+          <h2 className="font-satoshi text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-black uppercase">
             FEATURED EDITS
           </h2>
         </div>
 
-        <p className="font-inter text-sm md:text-base text-[#777777] max-w-md">
+        <p className="font-inter text-xs sm:text-sm md:text-base text-[#777777] max-w-md">
           A curated collection of commercial cuts, motion design, AI avatars, viral retention reels, and documentary storytelling.
         </p>
       </div>
 
-      {/* Category Filter Pills */}
-      <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-16">
+      {/* Category Filter Pills - Horizontally swipeable on mobile */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-3 sm:pb-0 mb-8 sm:mb-14 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat;
           const count = categoryCounts[cat] || 0;
@@ -49,14 +49,14 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`relative px-4 py-2 text-xs md:text-sm font-satoshi font-bold tracking-wider uppercase transition-all duration-200 border ${
+              className={`shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-satoshi font-bold tracking-wider uppercase transition-all duration-200 border ${
                 isSelected
-                  ? 'bg-black text-white border-black'
+                  ? 'bg-black text-white border-black shadow-sm'
                   : 'bg-white text-black border-[#EAEAEA] hover:border-black hover:bg-[#F5F5F5]'
               }`}
             >
               <span>{cat}</span>
-              <span className={`ml-2 text-[10px] font-mono ${isSelected ? 'text-white/70' : 'text-[#777777]'}`}>
+              <span className={`ml-1.5 text-[10px] font-mono ${isSelected ? 'text-white/70' : 'text-[#777777]'}`}>
                 ({count})
               </span>
             </button>
@@ -64,10 +64,10 @@ export default function SelectedWork({ projects, onOpenModal, setCursorState }) 
         })}
       </div>
 
-      {/* Asymmetric Editorial Grid */}
+      {/* Grid of video cards */}
       <motion.div
         layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12 md:gap-y-16 items-start"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-6 lg:gap-8 items-start"
       >
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project, index) => (

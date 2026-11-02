@@ -1,10 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Play, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { ArrowDown, Play, Volume2, VolumeX } from 'lucide-react';
 
 export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
   const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef(null);
 
   const toggleSound = (e) => {
@@ -32,46 +31,46 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen pt-32 pb-20 md:pt-40 md:pb-28 flex flex-col justify-between max-w-[1440px] mx-auto px-6 md:px-12">
+    <section id="hero" className="relative min-h-[90vh] md:min-h-screen pt-28 pb-16 md:pt-40 md:pb-28 flex flex-col justify-between max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12">
       {/* Top Metadata Bar */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex flex-wrap items-center justify-between gap-4 py-3 border-y border-[#EAEAEA] text-[11px] md:text-[12px] font-inter font-medium tracking-wider text-[#777777] uppercase mb-12 md:mb-16"
+        className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-4 py-2.5 sm:py-3 border-y border-[#EAEAEA] text-[10px] sm:text-[11px] md:text-[12px] font-inter font-medium tracking-wider text-[#777777] uppercase mb-8 sm:mb-12 md:mb-16"
       >
-        <div className="flex items-center gap-2 text-black">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-black">
           <span className="font-bold">HARI SAI</span>
           <span>/</span>
-          <span className="text-[#777777]">HYDERABAD, INDIA</span>
+          <span className="text-[#777777]">HYDERABAD</span>
         </div>
         <div>
-          <span>EXPERIENCE: </span>
+          <span>EXP: </span>
           <span className="font-semibold text-black">2+ YEARS</span>
         </div>
         <div className="hidden sm:block">
           <span>CURRENT: </span>
           <span className="text-black font-semibold">COUNT ON ME MARKETING</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-black"></span>
-          <span className="text-black font-semibold">AVAILABLE FOR PROJECTS</span>
+          <span className="text-black font-semibold">AVAILABLE</span>
         </div>
       </motion.div>
 
       {/* Main Headline & Supporting Text */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end mb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-end mb-10 sm:mb-16">
         <div className="lg:col-span-8">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col"
           >
-            <span className="font-satoshi text-xs md:text-sm font-bold tracking-[0.25em] text-[#777777] uppercase mb-3">
+            <span className="font-satoshi text-[11px] sm:text-xs md:text-sm font-bold tracking-[0.2em] sm:tracking-[0.25em] text-[#777777] uppercase mb-2 sm:mb-3">
               CREATIVE PORTFOLIO 2024–2026
             </span>
-            <h1 className="font-satoshi text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.75rem] font-black tracking-tighter text-black uppercase leading-[0.92]">
+            <h1 className="font-satoshi text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[5.75rem] font-black tracking-tighter text-black uppercase leading-[0.92]">
               VIDEO EDITOR
               <br />
               <span className="font-light italic text-[#777777]">&amp;</span> MOTION
@@ -87,7 +86,7 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="font-inter text-base md:text-lg text-black font-normal leading-relaxed mb-8 max-w-md"
+            className="font-inter text-sm sm:text-base md:text-lg text-black font-normal leading-relaxed mb-6 sm:mb-8 max-w-md"
           >
             Transforming ideas into compelling visual experiences through editing precision, motion storytelling, and deliberate sound design.
           </motion.p>
@@ -96,12 +95,12 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-wrap items-center gap-4"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
           >
             <a
               href="#work"
               onClick={handleScrollToWork}
-              className="px-7 py-3.5 bg-black text-white font-satoshi font-bold text-xs tracking-widest uppercase hover:bg-neutral-800 transition-all duration-200 inline-flex items-center gap-2 group"
+              className="px-6 py-3.5 bg-black text-white font-satoshi font-bold text-xs tracking-widest uppercase hover:bg-neutral-800 transition-all text-center inline-flex items-center justify-center gap-2 group"
             >
               <span>VIEW MY WORK</span>
               <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
@@ -110,7 +109,7 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
             <a
               href="#contact"
               onClick={handleScrollToContact}
-              className="px-7 py-3.5 border border-black text-black font-satoshi font-bold text-xs tracking-widest uppercase hover:bg-[#F5F5F5] transition-all duration-200"
+              className="px-6 py-3.5 border border-black text-black font-satoshi font-bold text-xs tracking-widest uppercase hover:bg-[#F5F5F5] transition-all text-center"
             >
               GET IN TOUCH
             </a>
@@ -120,15 +119,14 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
 
       {/* Hero Cinematic Video Preview Container */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full aspect-video md:aspect-[21/9] bg-neutral-100 overflow-hidden border border-[#EAEAEA] group cursor-pointer"
+        className="relative w-full aspect-video md:aspect-[21/9] bg-black overflow-hidden border border-[#EAEAEA] group cursor-pointer"
         onClick={() => onOpenModal && onOpenModal(featuredProject)}
         onMouseEnter={() => setCursorState && setCursorState({ text: 'PLAY', active: true })}
         onMouseLeave={() => setCursorState && setCursorState({ text: '', active: false })}
       >
-        {/* Actual Video Tag */}
         <video
           ref={videoRef}
           src={featuredProject?.videoUrl}
@@ -137,47 +135,47 @@ export default function Hero({ onOpenModal, featuredProject, setCursorState }) {
           muted={isMuted}
           loop
           playsInline
+          webkit-playsinline="true"
+          preload="metadata"
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
         />
 
-        {/* Minimal Gradient Vignette for Readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
 
-        {/* Overlay Badges */}
-        <div className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-3">
-          <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-black font-inter text-[10px] md:text-[11px] font-bold tracking-widest uppercase">
+        {/* Top Badges */}
+        <div className="absolute top-3 left-3 sm:top-5 sm:left-5 flex items-center gap-2 sm:gap-3">
+          <span className="px-2.5 py-1 bg-white/95 text-black font-inter text-[10px] font-bold tracking-widest uppercase">
             FEATURED SHOWCASE
           </span>
-          <span className="hidden sm:inline-block px-3 py-1 bg-black/70 backdrop-blur-md text-white font-inter text-[10px] md:text-[11px] font-medium tracking-wider">
+          <span className="hidden sm:inline-block px-2.5 py-1 bg-black/75 text-white font-inter text-[10px] font-medium tracking-wider">
             60 FPS MASTER
           </span>
         </div>
 
         {/* Bottom Bar: Title & Controls */}
-        <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex items-end justify-between text-white">
+        <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 flex items-end justify-between text-white gap-3">
           <div className="max-w-xl">
-            <span className="text-[10px] md:text-xs font-inter font-medium text-white/80 uppercase tracking-widest block mb-1">
+            <span className="text-[10px] sm:text-xs font-inter font-medium text-white/80 uppercase tracking-widest block mb-1">
               {featuredProject?.category} — {featuredProject?.client}
             </span>
-            <h2 className="font-satoshi text-lg md:text-2xl font-bold tracking-tight text-white leading-tight">
+            <h2 className="font-satoshi text-base sm:text-xl md:text-2xl font-bold tracking-tight text-white leading-tight line-clamp-1 sm:line-clamp-none">
               {featuredProject?.title}
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Audio Toggle */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               onClick={toggleSound}
               aria-label={isMuted ? 'Unmute preview' : 'Mute preview'}
-              className="p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-black hover:text-black transition-colors"
+              className="p-2 sm:p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors"
             >
-              {isMuted ? <VolumeX size={16} className="text-white group-hover:text-black" /> : <Volume2 size={16} className="text-white group-hover:text-black" />}
+              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
             </button>
 
-            {/* Play Badge */}
-            <div className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-white text-black font-satoshi font-bold text-xs tracking-wider uppercase group-hover:bg-neutral-100 transition-colors">
-              <Play size={13} fill="currentColor" />
-              <span>WATCH FULL EDIT</span>
+            <div className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 bg-white text-black font-satoshi font-bold text-[11px] sm:text-xs tracking-wider uppercase group-hover:bg-neutral-100 transition-colors">
+              <Play size={12} fill="currentColor" />
+              <span className="hidden sm:inline">WATCH FULL EDIT</span>
+              <span className="sm:hidden">PLAY</span>
             </div>
           </div>
         </div>
