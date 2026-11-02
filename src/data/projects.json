@@ -19,7 +19,7 @@
       "Subtitling"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-01.mp4",
-    "thumbnailUrl": "/thumbnails/project-01.jpg",
+    "thumbnailUrl": "./thumbnails/project-01.jpg",
     "width": 720,
     "height": 1280,
     "aspectRatio": "9:16",
@@ -52,7 +52,7 @@
       "Subtitling"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-02.mp4",
-    "thumbnailUrl": "/thumbnails/project-02.jpg",
+    "thumbnailUrl": "./thumbnails/project-02.jpg",
     "width": 720,
     "height": 1280,
     "aspectRatio": "9:16",
@@ -85,7 +85,7 @@
       "Typography Reveal"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-03.mp4",
-    "thumbnailUrl": "/thumbnails/project-03.jpg",
+    "thumbnailUrl": "./thumbnails/project-03.jpg",
     "width": 720,
     "height": 1280,
     "aspectRatio": "9:16",
@@ -118,7 +118,7 @@
       "Dynamic Framing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-04.mp4",
-    "thumbnailUrl": "/thumbnails/project-04.jpg",
+    "thumbnailUrl": "./thumbnails/project-04.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -151,7 +151,7 @@
       "Dynamic Framing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-05.mp4",
-    "thumbnailUrl": "/thumbnails/project-05.jpg",
+    "thumbnailUrl": "./thumbnails/project-05.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -184,7 +184,7 @@
       "Dynamic Framing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-06.mp4",
-    "thumbnailUrl": "/thumbnails/project-06.jpg",
+    "thumbnailUrl": "./thumbnails/project-06.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -217,7 +217,7 @@
       "Dynamic Framing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-07.mp4",
-    "thumbnailUrl": "/thumbnails/project-07.jpg",
+    "thumbnailUrl": "./thumbnails/project-07.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -250,7 +250,7 @@
       "Dynamic Framing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-08.mp4",
-    "thumbnailUrl": "/thumbnails/project-08.jpg",
+    "thumbnailUrl": "./thumbnails/project-08.jpg",
     "width": 720,
     "height": 1280,
     "aspectRatio": "9:16",
@@ -283,7 +283,7 @@
       "Audio Enhancement"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-09.mp4",
-    "thumbnailUrl": "/thumbnails/project-09.jpg",
+    "thumbnailUrl": "./thumbnails/project-09.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -316,7 +316,7 @@
       "Audio Enhancement"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-10.mp4",
-    "thumbnailUrl": "/thumbnails/project-10.jpg",
+    "thumbnailUrl": "./thumbnails/project-10.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -349,7 +349,7 @@
       "Audio Enhancement"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-11.mp4",
-    "thumbnailUrl": "/thumbnails/project-11.jpg",
+    "thumbnailUrl": "./thumbnails/project-11.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -382,7 +382,7 @@
       "Story Pacing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-12.mp4",
-    "thumbnailUrl": "/thumbnails/project-12.jpg",
+    "thumbnailUrl": "./thumbnails/project-12.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -415,7 +415,7 @@
       "Subtitling"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-13.mp4",
-    "thumbnailUrl": "/thumbnails/project-13.jpg",
+    "thumbnailUrl": "./thumbnails/project-13.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -448,7 +448,7 @@
       "Subtitling"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-14.mp4",
-    "thumbnailUrl": "/thumbnails/project-14.jpg",
+    "thumbnailUrl": "./thumbnails/project-14.jpg",
     "width": 1080,
     "height": 1920,
     "aspectRatio": "9:16",
@@ -481,7 +481,7 @@
       "Vibrant Grading"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-15.mp4",
-    "thumbnailUrl": "/thumbnails/project-15.jpg",
+    "thumbnailUrl": "./thumbnails/project-15.jpg",
     "width": 720,
     "height": 1280,
     "aspectRatio": "9:16",
@@ -514,7 +514,7 @@
       "Vibrant Grading"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-16.mp4",
-    "thumbnailUrl": "/thumbnails/project-16.jpg",
+    "thumbnailUrl": "./thumbnails/project-16.jpg",
     "width": 720,
     "height": 1280,
     "aspectRatio": "9:16",
@@ -548,7 +548,7 @@
       "Archival Pacing"
     ],
     "videoUrl": "https://github.com/harisaimanikanta/harisai-portfolio/releases/download/v1.0.0/project-17.mp4",
-    "thumbnailUrl": "/thumbnails/project-17.jpg",
+    "thumbnailUrl": "./thumbnails/project-17.jpg",
     "width": 1920,
     "height": 1080,
     "aspectRatio": "16:9",

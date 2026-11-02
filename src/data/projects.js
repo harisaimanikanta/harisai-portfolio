@@ -1,6 +1,16 @@
 import rawProjects from './projects.json';
 
-export const projects = rawProjects;
+// Ensure base URL is properly prefixed for GitHub Pages or root domains
+const BASE = import.meta.env.BASE_URL.endsWith('/') 
+  ? import.meta.env.BASE_URL 
+  : `${import.meta.env.BASE_URL}/`;
+
+export const projects = rawProjects.map(p => ({
+  ...p,
+  thumbnailUrl: p.thumbnailUrl.startsWith('http') 
+    ? p.thumbnailUrl 
+    : `${BASE}${p.thumbnailUrl.replace(/^\.?\//, '')}`
+}));
 
 export const categories = [
   'All',
@@ -11,7 +21,6 @@ export const categories = [
 ];
 
 export const getFeaturedProject = () => {
-  // Use the 60fps high impact Beast documentary as the main cinematic showreel feature
   const beast = projects.find(p => p.id === 'project-17' || p.title.includes('Beast'));
   return beast || projects[0];
 };

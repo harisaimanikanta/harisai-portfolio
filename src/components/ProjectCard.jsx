@@ -28,7 +28,6 @@ export default function ProjectCard({
     }
   };
 
-  // Determine aspect ratio class based on project orientation
   const isPortrait = project.orientation === 'portrait';
   const isLandscape = project.orientation === 'landscape';
 
@@ -56,17 +55,23 @@ export default function ProjectCard({
             : 'aspect-square'
         }`}
       >
-        {/* Poster Image (Visible always or until video loads on hover) */}
+        {/* Poster Image */}
         <img
           src={project.thumbnailUrl}
           alt={project.title}
           loading="lazy"
+          onError={(e) => {
+            const fallback = `./thumbnails/${project.id}.jpg`;
+            if (e.currentTarget.src !== fallback) {
+              e.currentTarget.src = fallback;
+            }
+          }}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
             isHovered ? 'opacity-0' : 'opacity-100'
           }`}
         />
 
-        {/* Hover Video Stream (Preload none until hovered) */}
+        {/* Hover Video Stream */}
         <video
           ref={videoRef}
           src={project.videoUrl}
@@ -79,8 +84,8 @@ export default function ProjectCard({
           }`}
         />
 
-        {/* Minimal Badges on Top */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+        {/* Badges on Top */}
+        <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
           <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-black font-inter text-[10px] font-bold tracking-widest uppercase">
             {project.category}
           </span>
@@ -90,7 +95,7 @@ export default function ProjectCard({
         </div>
 
         {/* Hover Action Badge on Center */}
-        <div className={`absolute inset-0 bg-black/20 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 pointer-events-none ${
+        <div className={`absolute inset-0 bg-black/20 backdrop-blur-[1px] flex items-center justify-center transition-opacity duration-300 pointer-events-none z-10 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
           <div className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-lg transform transition-transform group-hover:scale-110">
@@ -98,8 +103,8 @@ export default function ProjectCard({
           </div>
         </div>
 
-        {/* Subtle Aspect Ratio Pill at Bottom Left */}
-        <div className="absolute bottom-3 left-3 pointer-events-none">
+        {/* Aspect Ratio Pill at Bottom Left */}
+        <div className="absolute bottom-3 left-3 pointer-events-none z-10">
           <span className="px-2 py-0.5 bg-black/70 text-white/90 font-mono text-[9px] uppercase tracking-wider">
             {project.aspectRatio}
           </span>
