@@ -27,9 +27,6 @@ export default function BackgroundAudio({ isVideoPlaying }) {
     if (audio.paused && !audio.muted) {
       audio.play().catch(() => {});
     }
-    if (window.__sendElementorAudioCmd) {
-      window.__sendElementorAudioCmd('playVideo');
-    }
 
     return () => {
       audio.removeEventListener('play', updateAudioStatus);
@@ -41,16 +38,12 @@ export default function BackgroundAudio({ isVideoPlaying }) {
   // When any video plays on the website, pause the background audio
   useEffect(() => {
     const audio = document.getElementById('bg-soundtrack');
+    if (!audio) return;
+
     if (isVideoPlaying) {
-      if (audio) audio.pause();
-      if (window.__sendElementorAudioCmd) {
-        window.__sendElementorAudioCmd('pauseVideo');
-      }
+      audio.pause();
     } else if (!isMuted) {
-      if (audio) audio.play().catch(() => {});
-      if (window.__sendElementorAudioCmd) {
-        window.__sendElementorAudioCmd('playVideo');
-      }
+      audio.play().catch(() => {});
     }
   }, [isVideoPlaying, isMuted]);
 
@@ -59,12 +52,8 @@ export default function BackgroundAudio({ isVideoPlaying }) {
     const audio = document.getElementById('bg-soundtrack');
     if (!audio) return;
 
-    if (!isMuted) {
+    if (!isMuted && !audio.paused) {
       audio.pause();
-      if (window.__sendElementorAudioCmd) {
-        window.__sendElementorAudioCmd('pauseVideo');
-        window.__sendElementorAudioCmd('mute');
-      }
       setIsMuted(true);
       setIsPlaying(false);
     } else {
@@ -73,10 +62,6 @@ export default function BackgroundAudio({ isVideoPlaying }) {
       audio.volume = 0.85;
       if (!isVideoPlaying) {
         audio.play().catch(() => {});
-      }
-      if (window.__sendElementorAudioCmd && !isVideoPlaying) {
-        window.__sendElementorAudioCmd('unMute');
-        window.__sendElementorAudioCmd('playVideo');
       }
     }
   };
@@ -115,7 +100,7 @@ export default function BackgroundAudio({ isVideoPlaying }) {
             {isVideoPlaying ? 'VIDEO PLAYING' : isMuted ? 'SOUNDTRACK MUTED' : 'SOUNDTRACK PLAYING'}
           </span>
           <span className="font-mono text-[9px] text-[#777777] uppercase tracking-wider leading-none">
-            {isMuted ? 'CLICK TO UNMUTE' : 'CLICK TO MUTE'} • FEAR SONG
+            {isMuted ? 'CLICK TO UNMUTE' : 'CLICK TO MUTE'} • SOUNDTRACK
           </span>
         </div>
 

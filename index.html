@@ -24,18 +24,7 @@
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400,300&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-white text-black antialiased selection:bg-black selection:text-white overflow-x-hidden font-sans">
-    <!-- Elementor Background Music Tag (YouTube iFrame Embed) -->
-    <div id="elementor-bg-music-container" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:-99;">
-      <iframe
-        id="elementor-bg-audio"
-        src="https://www.youtube.com/embed/WWEs82u37Mw?autoplay=1&mute=0&controls=0&loop=1&playlist=WWEs82u37Mw&start=17&playsinline=1&enablejsapi=1"
-        title="Background Music"
-        frameborder="0"
-        allow="autoplay; encrypted-media"
-      ></iframe>
-    </div>
-
-    <!-- Elementor HTML5 Audio Tag -->
+    <!-- Direct High-Fidelity Audio Stream (Clean, No Ads) -->
     <audio id="bg-soundtrack" autoplay loop preload="auto" playsinline webkit-playsinline>
       <source src="./audio/bg-music.mp3" type="audio/mpeg">
       Your browser does not support the audio element.
@@ -44,35 +33,28 @@
     <script>
       (function() {
         var audio = document.getElementById('bg-soundtrack');
-        var iframe = document.getElementById('elementor-bg-audio');
+        if (!audio) return;
+        audio.volume = 0.85;
 
-        function sendIframeCommand(cmd, args) {
-          if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage(JSON.stringify({
-              event: 'command',
-              func: cmd,
-              args: args || []
-            }), '*');
-          }
-        }
-
-        window.__sendElementorAudioCmd = sendIframeCommand;
-
-        function startAll() {
-          if (audio) {
-            audio.volume = 0.85;
+        function startAudio() {
+          if (audio.paused) {
             audio.play().catch(function() {});
           }
-          sendIframeCommand('playVideo');
         }
 
         // Try direct playback on millisecond 0
-        startAll();
+        startAudio();
 
         // Any touch, click, pointer or keydown starts playback immediately
         var events = ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'click', 'keydown'];
         function onInteract() {
-          startAll();
+          startAudio();
+          if (!audio.paused) {
+            events.forEach(function(e) {
+              document.removeEventListener(e, onInteract, true);
+              window.removeEventListener(e, onInteract, true);
+            });
+          }
         }
         events.forEach(function(e) {
           document.addEventListener(e, onInteract, { capture: true, passive: true });
