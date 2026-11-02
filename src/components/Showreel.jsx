@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize2, RotateCcw, RotateCw } from 'lucide-react';
 
 export default function Showreel({
   project,
@@ -9,9 +9,12 @@ export default function Showreel({
   setCursorState
 }) {
   const videoRef = useRef(null);
+  const progressBarRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentTimeStr, setCurrentTimeStr] = useState('0:00');
+  const [isSeeking, setIsSeeking] = useState(false);
 
   const currentProject = project;
 
@@ -22,7 +25,6 @@ export default function Showreel({
 
     if (!isActiveAudio) {
       if (isPlaying) {
-        // Another video took audio priority or audio was deactivated
         video.muted = true;
         setIsMuted(true);
       }
@@ -43,7 +45,10 @@ export default function Showreel({
         onActivateAudio(null);
       }
     } else {
-      // User hit play: video plays and background music stops
+      // User hit play: start from beginning if ended or first time, stop bg music
+      if (video.currentTime >= (video.duration || 1) - 0.5) {
+        video.currentTime = 0;
+      }
       if (onActivateAudio) {
         onActivateAudio('showreel');
       }
@@ -52,7 +57,6 @@ export default function Showreel({
       video.play()
         .then(() => setIsPlaying(true))
         .catch(() => {
-          // If browser requires muted initial play
           video.muted = true;
           setIsMuted(true);
           video.play().then(() => setIsPlaying(true));
@@ -83,17 +87,66 @@ export default function Showreel({
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
-    if (!video || !video.duration) return;
+    if (!video || !video.duration || isSeeking) return;
     const current = video.currentTime;
     const total = video.duration;
     setProgress((current / total) * 100);
+
+    const m = Math.floor(current / 60);
+    const s = Math.floor(current % 60);
+    setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
   };
 
-  // Prevent keyboard forward / rewind (ArrowLeft / ArrowRight)
+  // Adjust playback: seek to exact clicked/dragged position
+  const seekToPosition = (clientX) => {
+    const video = videoRef.current;
+    const bar = progressBarRef.current;
+    if (!video || !video.duration || !bar) return;
+
+    const rect = bar.getBoundingClientRect();
+    const clickX = clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    video.currentTime = pct * video.duration;
+    setProgress(pct * 100);
+
+    const cur = video.currentTime;
+    const m = Math.floor(cur / 60);
+    const s = Math.floor(cur % 60);
+    setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+  };
+
+  const handleProgressBarClick = (e) => {
+    e.stopPropagation();
+    seekToPosition(e.clientX);
+  };
+
+  // Quick forward/backward skip
+  const handleSkip = (seconds, e) => {
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    const newTime = Math.max(0, Math.min(video.duration || 0, video.currentTime + seconds));
+    video.currentTime = newTime;
+
+    if (video.duration) {
+      setProgress((newTime / video.duration) * 100);
+      const m = Math.floor(newTime / 60);
+      const s = Math.floor(newTime % 60);
+      setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+    }
+  };
+
   const handleKeyDown = (e) => {
-    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+    if (e.key === 'ArrowLeft' || e.key === 'j') {
       e.preventDefault();
-      e.stopPropagation();
+      handleSkip(-5);
+    } else if (e.key === 'ArrowRight' || e.key === 'l') {
+      e.preventDefault();
+      handleSkip(5);
+    } else if (e.key === ' ') {
+      e.preventDefault();
+      togglePlay();
     }
   };
 
@@ -142,9 +195,9 @@ export default function Showreel({
               if (isActiveAudio && onActivateAudio) onActivateAudio(null);
             }}
             onKeyDown={handleKeyDown}
-            tabIndex={-1}
+            tabIndex={0}
             onClick={togglePlay}
-            className="w-full h-full object-cover cursor-pointer"
+            className="w-full h-full object-cover cursor-pointer focus:outline-none"
           />
 
           {/* Central Play Indicator Overlay when Paused */}
@@ -164,22 +217,42 @@ export default function Showreel({
             </div>
           )}
 
-          {/* Passive Progress & Controls Bar (Strictly NO forwarding / rewinding allowed) */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 md:p-6 bg-gradient-to-t from-black/85 via-black/45 to-transparent flex flex-col gap-2 sm:gap-3 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            {/* Passive Progress Bar */}
+          {/* Interactive Scrubber & Controls Bar (Adjust forward / backward) */}
+          <div
+            className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 md:p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-2 sm:gap-3 opacity-95 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Interactive Timeline Scrubber */}
             <div
-              className="w-full h-1 sm:h-1.5 bg-white/20 rounded-full overflow-hidden pointer-events-none select-none"
-              aria-hidden="true"
+              ref={progressBarRef}
+              onClick={handleProgressBarClick}
+              onTouchStart={(e) => {
+                setIsSeeking(true);
+                if (e.touches[0]) seekToPosition(e.touches[0].clientX);
+              }}
+              onTouchMove={(e) => {
+                if (e.touches[0]) seekToPosition(e.touches[0].clientX);
+              }}
+              onTouchEnd={() => setIsSeeking(false)}
+              className="w-full py-1.5 cursor-pointer group/bar relative flex items-center"
+              title="Click or drag to adjust playback"
             >
+              <div className="w-full h-1.5 sm:h-2 group-hover/bar:h-3 bg-white/25 rounded-full overflow-hidden transition-all relative">
+                <div
+                  className="h-full bg-white transition-all duration-75"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
               <div
-                className="h-full bg-white transition-all duration-75"
-                style={{ width: `${progress}%` }}
+                className="absolute top-1/2 -translate-y-1/2 -ml-2 w-4 h-4 bg-white rounded-full shadow-lg scale-0 group-hover/bar:scale-100 transition-transform pointer-events-none"
+                style={{ left: `${progress}%` }}
               />
             </div>
 
             {/* Bottom Controls */}
             <div className="flex items-center justify-between text-white text-xs font-inter">
-              <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-2.5 sm:gap-4">
+                {/* Play / Pause */}
                 <button
                   onClick={togglePlay}
                   className="p-1 sm:p-1.5 hover:text-[#777777] transition-colors"
@@ -188,9 +261,32 @@ export default function Showreel({
                   {isPlaying ? <Pause size={17} /> : <Play size={17} fill="currentColor" />}
                 </button>
 
+                {/* Rewind 5s */}
+                <button
+                  onClick={(e) => handleSkip(-5, e)}
+                  className="p-1 sm:p-1.5 hover:text-[#777777] transition-colors flex items-center gap-0.5"
+                  title="Rewind 5s"
+                  aria-label="Rewind 5s"
+                >
+                  <RotateCcw size={15} />
+                  <span className="text-[10px] font-mono leading-none">5</span>
+                </button>
+
+                {/* Forward 5s */}
+                <button
+                  onClick={(e) => handleSkip(5, e)}
+                  className="p-1 sm:p-1.5 hover:text-[#777777] transition-colors flex items-center gap-0.5"
+                  title="Forward 5s"
+                  aria-label="Forward 5s"
+                >
+                  <RotateCw size={15} />
+                  <span className="text-[10px] font-mono leading-none">5</span>
+                </button>
+
+                {/* Mute */}
                 <button
                   onClick={toggleMute}
-                  className="p-1 sm:p-1.5 hover:text-[#777777] transition-colors"
+                  className="p-1 sm:p-1.5 hover:text-[#777777] transition-colors ml-1"
                   aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
                   {isMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
@@ -203,7 +299,7 @@ export default function Showreel({
 
               <div className="flex items-center gap-2 sm:gap-3">
                 <span className="text-[10px] sm:text-[11px] font-mono tracking-wider text-white/70">
-                  {currentProject?.aspectRatio} • {currentProject?.durationFormatted}
+                  {currentTimeStr} / {currentProject?.durationFormatted}
                 </span>
 
                 <button

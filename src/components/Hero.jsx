@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { ArrowDown, Play, Pause, Volume2, VolumeX, RotateCcw, RotateCw } from 'lucide-react';
 
 export default function Hero({
   featuredProject,
@@ -10,7 +10,11 @@ export default function Hero({
 }) {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [currentTimeStr, setCurrentTimeStr] = useState('0:00');
+  const [isSeeking, setIsSeeking] = useState(false);
   const videoRef = useRef(null);
+  const progressBarRef = useRef(null);
 
   // Sync with global audio state
   useEffect(() => {
@@ -32,12 +36,12 @@ export default function Hero({
     if (!video) return;
 
     if (isMuted) {
+      // Play from beginning with audio
+      video.currentTime = 0;
       if (onActivateAudio) onActivateAudio('hero');
       video.muted = false;
       setIsMuted(false);
-      if (!isPlaying) {
-        video.play().then(() => setIsPlaying(true));
-      }
+      video.play().then(() => setIsPlaying(true)).catch(() => {});
     } else {
       video.muted = true;
       setIsMuted(true);
@@ -68,11 +72,68 @@ export default function Hero({
     }
   };
 
-  // Prevent keyboard forward / rewind
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video || !video.duration || isSeeking) return;
+    const cur = video.currentTime;
+    const dur = video.duration;
+    setProgress((cur / dur) * 100);
+
+    const m = Math.floor(cur / 60);
+    const s = Math.floor(cur % 60);
+    setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+  };
+
+  // Adjust playback: seek to exact clicked/dragged position
+  const seekToPosition = (clientX) => {
+    const video = videoRef.current;
+    const bar = progressBarRef.current;
+    if (!video || !video.duration || !bar) return;
+
+    const rect = bar.getBoundingClientRect();
+    const clickX = clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    video.currentTime = pct * video.duration;
+    setProgress(pct * 100);
+
+    const cur = video.currentTime;
+    const m = Math.floor(cur / 60);
+    const s = Math.floor(cur % 60);
+    setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+  };
+
+  const handleProgressBarClick = (e) => {
+    e.stopPropagation();
+    seekToPosition(e.clientX);
+  };
+
+  // Quick forward/backward skip
+  const handleSkip = (seconds, e) => {
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    const newTime = Math.max(0, Math.min(video.duration || 0, video.currentTime + seconds));
+    video.currentTime = newTime;
+
+    if (video.duration) {
+      setProgress((newTime / video.duration) * 100);
+      const m = Math.floor(newTime / 60);
+      const s = Math.floor(newTime % 60);
+      setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+    }
+  };
+
   const handleKeyDown = (e) => {
-    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+    if (e.key === 'ArrowLeft' || e.key === 'j') {
       e.preventDefault();
-      e.stopPropagation();
+      handleSkip(-5);
+    } else if (e.key === 'ArrowRight' || e.key === 'l') {
+      e.preventDefault();
+      handleSkip(5);
+    } else if (e.key === ' ') {
+      e.preventDefault();
+      togglePlay(e);
     }
   };
 
@@ -179,7 +240,7 @@ export default function Hero({
         </div>
       </div>
 
-      {/* Hero Cinematic Video Player - No Seeking */}
+      {/* Hero Cinematic Video Player */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -199,15 +260,16 @@ export default function Hero({
           playsInline
           webkit-playsinline="true"
           preload="metadata"
+          onTimeUpdate={handleTimeUpdate}
           onKeyDown={handleKeyDown}
-          tabIndex={-1}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
+          tabIndex={0}
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01] focus:outline-none"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/25 pointer-events-none" />
 
         {/* Top Badges */}
-        <div className="absolute top-3 left-3 sm:top-5 sm:left-5 flex items-center gap-2 sm:gap-3">
+        <div className="absolute top-3 left-3 sm:top-5 sm:left-5 flex items-center gap-2 sm:gap-3 pointer-events-none">
           <span className="px-2.5 py-1 bg-white/95 text-black font-inter text-[10px] font-bold tracking-widest uppercase shadow-sm">
             FEATURED SHOWCASE
           </span>
@@ -216,35 +278,91 @@ export default function Hero({
           </span>
         </div>
 
-        {/* Bottom Bar: Title & In-Place Controls */}
-        <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 flex items-end justify-between text-white gap-3 z-10">
-          <div className="max-w-xl">
-            <span className="text-[10px] sm:text-xs font-inter font-medium text-white/80 uppercase tracking-widest block mb-1">
-              {featuredProject?.category} — {featuredProject?.client}
-            </span>
-            <h2 className="font-satoshi text-base sm:text-xl md:text-2xl font-bold tracking-tight text-white leading-tight line-clamp-1 sm:line-clamp-none">
-              {featuredProject?.title}
-            </h2>
+        {/* Bottom Bar: Title & In-Place Controls with Seek */}
+        <div
+          className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 flex flex-col gap-2.5 text-white z-10"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Scrubber bar */}
+          <div
+            ref={progressBarRef}
+            onClick={handleProgressBarClick}
+            onTouchStart={(e) => {
+              setIsSeeking(true);
+              if (e.touches[0]) seekToPosition(e.touches[0].clientX);
+            }}
+            onTouchMove={(e) => {
+              if (e.touches[0]) seekToPosition(e.touches[0].clientX);
+            }}
+            onTouchEnd={() => setIsSeeking(false)}
+            className="w-full py-1.5 cursor-pointer group/bar relative flex items-center"
+            title="Click or drag to adjust playback"
+          >
+            <div className="w-full h-1 group-hover/bar:h-2 bg-white/25 rounded-full overflow-hidden transition-all relative">
+              <div
+                className="h-full bg-white transition-all duration-75"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div
+              className="absolute top-1/2 -translate-y-1/2 -ml-1.5 w-3 h-3 bg-white rounded-full shadow-md scale-0 group-hover/bar:scale-100 transition-transform pointer-events-none"
+              style={{ left: `${progress}%` }}
+            />
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Play / Pause */}
-            <button
-              onClick={togglePlay}
-              className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors"
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
-            </button>
+          <div className="flex items-end justify-between gap-3">
+            <div className="max-w-xl">
+              <span className="text-[10px] sm:text-xs font-inter font-medium text-white/80 uppercase tracking-widest block mb-1">
+                {featuredProject?.category} — {featuredProject?.client}
+              </span>
+              <h2 className="font-satoshi text-base sm:text-xl md:text-2xl font-bold tracking-tight text-white leading-tight line-clamp-1 sm:line-clamp-none">
+                {featuredProject?.title}
+              </h2>
+            </div>
 
-            {/* Sound Toggle - Sleek minimal round button */}
-            <button
-              onClick={toggleSound}
-              className="p-2 sm:p-2.5 rounded-full bg-white text-black hover:bg-neutral-200 transition-colors shadow-lg flex items-center justify-center"
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
-            >
-              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-            </button>
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* Play / Pause */}
+              <button
+                onClick={togglePlay}
+                className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors"
+                title={isPlaying ? 'Pause' : 'Play'}
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+              >
+                {isPlaying ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
+              </button>
+
+              {/* Rewind 5s */}
+              <button
+                onClick={(e) => handleSkip(-5, e)}
+                className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors flex items-center gap-0.5"
+                title="Rewind 5s"
+                aria-label="Rewind 5s"
+              >
+                <RotateCcw size={14} />
+                <span className="text-[9px] font-mono leading-none">5</span>
+              </button>
+
+              {/* Forward 5s */}
+              <button
+                onClick={(e) => handleSkip(5, e)}
+                className="p-2 sm:p-2.5 rounded-full bg-white/20 backdrop-blur-md hover:bg-white text-white hover:text-black transition-colors flex items-center gap-0.5"
+                title="Forward 5s"
+                aria-label="Forward 5s"
+              >
+                <RotateCw size={14} />
+                <span className="text-[9px] font-mono leading-none">5</span>
+              </button>
+
+              {/* Sound Toggle */}
+              <button
+                onClick={toggleSound}
+                className="p-2 sm:p-2.5 rounded-full bg-white text-black hover:bg-neutral-200 transition-colors shadow-lg flex items-center justify-center"
+                title={isMuted ? 'Unmute' : 'Mute'}
+                aria-label={isMuted ? 'Unmute' : 'Mute'}
+              >
+                {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>

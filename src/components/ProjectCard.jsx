@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize2, RotateCcw, RotateCw } from 'lucide-react';
 
 export default function ProjectCard({
   project,
@@ -10,16 +10,20 @@ export default function ProjectCard({
   setCursorState
 }) {
   const videoRef = useRef(null);
+  const progressBarRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [currentTimeStr, setCurrentTimeStr] = useState('0:00');
+  const [isSeeking, setIsSeeking] = useState(false);
 
-  // Synchronize audio state with parent
+  // Synchronize audio state with parent - when audio becomes active, restart video from beginning!
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     if (isAudioActive) {
+      // Play from the beginning instead of resuming preview
+      video.currentTime = 0;
       video.muted = false;
       video.play()
         .then(() => setIsPlaying(true))
@@ -31,7 +35,7 @@ export default function ProjectCard({
     }
   }, [isAudioActive]);
 
-  // Autoplay muted when scrolled into view
+  // Autoplay muted preview when scrolled into view
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -60,7 +64,17 @@ export default function ProjectCard({
   }, []);
 
   const handleCardClick = () => {
-    onToggleAudio(isAudioActive ? null : project.id);
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isAudioActive) {
+      // Deactivate audio
+      onToggleAudio(null);
+    } else {
+      // Restart from the beginning with audio
+      video.currentTime = 0;
+      onToggleAudio(project.id);
+    }
   };
 
   const handlePlayPause = (e) => {
@@ -68,14 +82,16 @@ export default function ProjectCard({
     const video = videoRef.current;
     if (!video) return;
 
-    if (isPlaying) {
+    if (isPlaying && isAudioActive) {
       video.pause();
       setIsPlaying(false);
-      if (isAudioActive) {
-        onToggleAudio(null);
-      }
+      onToggleAudio(null);
     } else {
-      onToggleAudio(project.id);
+      if (!isAudioActive) {
+        // Start from beginning with audio
+        video.currentTime = 0;
+        onToggleAudio(project.id);
+      }
       video.play()
         .then(() => setIsPlaying(true))
         .catch(() => {});
@@ -84,12 +100,20 @@ export default function ProjectCard({
 
   const handleMuteToggle = (e) => {
     e.stopPropagation();
-    onToggleAudio(isAudioActive ? null : project.id);
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isAudioActive) {
+      onToggleAudio(null);
+    } else {
+      video.currentTime = 0;
+      onToggleAudio(project.id);
+    }
   };
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
-    if (!video || !video.duration) return;
+    if (!video || !video.duration || isSeeking) return;
     const cur = video.currentTime;
     const dur = video.duration;
     setProgress((cur / dur) * 100);
@@ -99,11 +123,57 @@ export default function ProjectCard({
     setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
   };
 
-  // Prevent keyboard forward / rewind (ArrowLeft / ArrowRight)
+  // Adjust playback: seek to exact clicked/dragged position
+  const seekToPosition = (clientX) => {
+    const video = videoRef.current;
+    const bar = progressBarRef.current;
+    if (!video || !video.duration || !bar) return;
+
+    const rect = bar.getBoundingClientRect();
+    const clickX = clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    video.currentTime = pct * video.duration;
+    setProgress(pct * 100);
+
+    const cur = video.currentTime;
+    const m = Math.floor(cur / 60);
+    const s = Math.floor(cur % 60);
+    setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+  };
+
+  const handleProgressBarClick = (e) => {
+    e.stopPropagation();
+    seekToPosition(e.clientX);
+  };
+
+  // Quick forward/backward skip (e.g. +5s, -5s)
+  const handleSkip = (seconds, e) => {
+    if (e) e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    const newTime = Math.max(0, Math.min(video.duration || 0, video.currentTime + seconds));
+    video.currentTime = newTime;
+
+    if (video.duration) {
+      setProgress((newTime / video.duration) * 100);
+      const m = Math.floor(newTime / 60);
+      const s = Math.floor(newTime % 60);
+      setCurrentTimeStr(`${m}:${s.toString().padStart(2, '0')}`);
+    }
+  };
+
+  // Keyboard navigation for playback adjustment
   const handleKeyDown = (e) => {
-    if (['ArrowLeft', 'ArrowRight', 'j', 'l', 'Home', 'End'].includes(e.key)) {
+    if (e.key === 'ArrowLeft' || e.key === 'j') {
       e.preventDefault();
-      e.stopPropagation();
+      handleSkip(-5);
+    } else if (e.key === 'ArrowRight' || e.key === 'l') {
+      e.preventDefault();
+      handleSkip(5);
+    } else if (e.key === ' ') {
+      e.preventDefault();
+      handlePlayPause(e);
     }
   };
 
@@ -134,7 +204,7 @@ export default function ProjectCard({
       onMouseEnter={() => setCursorState && setCursorState({ text: isAudioActive ? 'PAUSE' : 'PLAY', active: true })}
       onMouseLeave={() => setCursorState && setCursorState({ text: '', active: false })}
     >
-      {/* Video Container - Clean, unobstructed */}
+      {/* Video Container */}
       <div
         onClick={handleCardClick}
         className={`relative w-full overflow-hidden bg-black border ${
@@ -147,7 +217,7 @@ export default function ProjectCard({
             : 'aspect-square'
         }`}
       >
-        {/* Direct Playing Video - NO controls, no seeking */}
+        {/* Direct Playing Video */}
         <video
           ref={videoRef}
           src={project.videoUrl}
@@ -160,8 +230,8 @@ export default function ProjectCard({
           preload="metadata"
           onTimeUpdate={handleTimeUpdate}
           onKeyDown={handleKeyDown}
-          tabIndex={-1}
-          className="w-full h-full object-cover"
+          tabIndex={0}
+          className="w-full h-full object-cover focus:outline-none"
         />
 
         {/* Minimal Corner Badges */}
@@ -182,38 +252,81 @@ export default function ProjectCard({
           </div>
         </div>
 
-        {/* In-Place Audio Controls Bar (Appears when active or hovered) */}
+        {/* Interactive Controls Bar with Playback Adjustment (Scrubber + Rewind / Forward) */}
         <div
-          className={`absolute bottom-0 left-0 right-0 p-2.5 sm:p-3 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-1.5 z-20 transition-opacity duration-200 ${
+          className={`absolute bottom-0 left-0 right-0 p-2.5 sm:p-3 bg-gradient-to-t from-black/95 via-black/60 to-transparent flex flex-col gap-2 z-20 transition-opacity duration-200 ${
             isAudioActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Passive Non-Interactive Progress Indicator (Strictly NO forwarding / rewinding allowed) */}
+          {/* Interactive Scrubber Timeline (Click or drag to seek forward/backward) */}
           <div
-            className="w-full h-1 bg-white/20 rounded-full overflow-hidden pointer-events-none select-none"
-            aria-hidden="true"
+            ref={progressBarRef}
+            onClick={handleProgressBarClick}
+            onTouchStart={(e) => {
+              setIsSeeking(true);
+              if (e.touches[0]) seekToPosition(e.touches[0].clientX);
+            }}
+            onTouchMove={(e) => {
+              if (e.touches[0]) seekToPosition(e.touches[0].clientX);
+            }}
+            onTouchEnd={() => setIsSeeking(false)}
+            className="w-full py-1.5 cursor-pointer group/bar relative flex items-center"
+            title="Click or drag to adjust playback"
           >
+            <div className="w-full h-1 group-hover/bar:h-2 bg-white/25 rounded-full overflow-hidden transition-all relative">
+              <div
+                className="h-full bg-white transition-all duration-75"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            {/* Visual scrubber knob thumb */}
             <div
-              className="h-full bg-white transition-all duration-75"
-              style={{ width: `${progress}%` }}
+              className="absolute top-1/2 -translate-y-1/2 -ml-1.5 w-3 h-3 bg-white rounded-full shadow-md scale-0 group-hover/bar:scale-100 transition-transform pointer-events-none"
+              style={{ left: `${progress}%` }}
             />
           </div>
 
-          {/* Controls Row */}
+          {/* Controls Row: Play/Pause, Rewind 5s, Forward 5s, Mute, Time, Fullscreen */}
           <div className="flex items-center justify-between text-white text-xs">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Play / Pause */}
               <button
                 onClick={handlePlayPause}
                 className="p-1 hover:text-neutral-300 transition-colors"
+                title={isPlaying ? 'Pause' : 'Play'}
                 aria-label={isPlaying ? 'Pause' : 'Play'}
               >
                 {isPlaying ? <Pause size={15} /> : <Play size={15} fill="currentColor" />}
               </button>
 
+              {/* Rewind 5 seconds */}
+              <button
+                onClick={(e) => handleSkip(-5, e)}
+                className="p-1 hover:text-neutral-300 transition-colors flex items-center gap-0.5"
+                title="Rewind 5s"
+                aria-label="Rewind 5s"
+              >
+                <RotateCcw size={13} />
+                <span className="text-[9px] font-mono leading-none">5</span>
+              </button>
+
+              {/* Forward 5 seconds */}
+              <button
+                onClick={(e) => handleSkip(5, e)}
+                className="p-1 hover:text-neutral-300 transition-colors flex items-center gap-0.5"
+                title="Forward 5s"
+                aria-label="Forward 5s"
+              >
+                <RotateCw size={13} />
+                <span className="text-[9px] font-mono leading-none">5</span>
+              </button>
+
+              {/* Mute / Unmute */}
               <button
                 onClick={handleMuteToggle}
-                className="p-1 hover:text-neutral-300 transition-colors"
+                className="p-1 hover:text-neutral-300 transition-colors ml-0.5"
+                title={isAudioActive ? 'Mute' : 'Unmute'}
                 aria-label={isAudioActive ? 'Mute' : 'Unmute'}
               >
                 {isAudioActive ? <Volume2 size={15} /> : <VolumeX size={15} />}
@@ -221,13 +334,14 @@ export default function ProjectCard({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] text-white/80 pointer-events-none select-none">
+              <span className="font-mono text-[10px] text-white/80 select-none">
                 {currentTimeStr} / {project.durationFormatted}
               </span>
 
               <button
                 onClick={handleFullscreen}
                 className="p-1 hover:text-neutral-300 transition-colors"
+                title="Fullscreen"
                 aria-label="Fullscreen"
               >
                 <Maximize2 size={14} />

@@ -17,8 +17,8 @@ export default function BackgroundAudio({ isVideoPlaying }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Reduced volume for subtle background ambience
-    audio.volume = 0.18;
+    // Optimized volume for ambient background score
+    audio.volume = 0.30;
 
     // Attempt direct autoplay
     const tryPlay = () => {
