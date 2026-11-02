@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-color: #FFFFFF;
+    --text-primary: #000000;
+    --text-secondary: #777777;
+    --border-color: #EAEAEA;
+    --hover-bg: #F5F5F5;
+  }
+
+  html {
+    background-color: #FFFFFF;
+    color: #000000;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #000000;
+    overflow-x: hidden;
+    letter-spacing: -0.015em;
+  }
+
+  /* Lenis smooth scrolling support */
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+
+  /* Custom minimal scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #FFFFFF;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #D4D4D4;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #000000;
+  }
+}
+
+/* Typography Utility Classes */
+.font-satoshi {
+  font-family: 'Satoshi', -apple-system, sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Editorial line clip / mask animations */
+.overflow-clip-mask {
+  overflow: hidden;
+  display: block;
+}
+
+/* Clean border helper */
+.border-subtle {
+  border-color: #EAEAEA;
+}
+
+/* Hide default cursor on desktop when interactive preview is active */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-none-custom {
+    cursor: none !important;
+  }
+}
