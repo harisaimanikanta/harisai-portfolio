@@ -23,9 +23,12 @@ export default function BackgroundAudio({ isVideoPlaying }) {
 
     updateAudioStatus();
 
-    // Secondary try in case browser permitted audio
+    // Trigger playback
     if (audio.paused && !audio.muted) {
       audio.play().catch(() => {});
+    }
+    if (window.__sendElementorAudioCmd) {
+      window.__sendElementorAudioCmd('playVideo');
     }
 
     return () => {
@@ -38,12 +41,16 @@ export default function BackgroundAudio({ isVideoPlaying }) {
   // When any video plays on the website, pause the background audio
   useEffect(() => {
     const audio = document.getElementById('bg-soundtrack');
-    if (!audio) return;
-
     if (isVideoPlaying) {
-      audio.pause();
+      if (audio) audio.pause();
+      if (window.__sendElementorAudioCmd) {
+        window.__sendElementorAudioCmd('pauseVideo');
+      }
     } else if (!isMuted) {
-      audio.play().catch(() => {});
+      if (audio) audio.play().catch(() => {});
+      if (window.__sendElementorAudioCmd) {
+        window.__sendElementorAudioCmd('playVideo');
+      }
     }
   }, [isVideoPlaying, isMuted]);
 
@@ -52,8 +59,12 @@ export default function BackgroundAudio({ isVideoPlaying }) {
     const audio = document.getElementById('bg-soundtrack');
     if (!audio) return;
 
-    if (!isMuted && !audio.paused) {
+    if (!isMuted) {
       audio.pause();
+      if (window.__sendElementorAudioCmd) {
+        window.__sendElementorAudioCmd('pauseVideo');
+        window.__sendElementorAudioCmd('mute');
+      }
       setIsMuted(true);
       setIsPlaying(false);
     } else {
@@ -62,6 +73,10 @@ export default function BackgroundAudio({ isVideoPlaying }) {
       audio.volume = 0.85;
       if (!isVideoPlaying) {
         audio.play().catch(() => {});
+      }
+      if (window.__sendElementorAudioCmd && !isVideoPlaying) {
+        window.__sendElementorAudioCmd('unMute');
+        window.__sendElementorAudioCmd('playVideo');
       }
     }
   };
