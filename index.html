@@ -22,10 +22,45 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400,300&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="./assets/index-DCTjOXSB.js"></script>
+    <script type="module" crossorigin src="./assets/index-Dq3ltt0b.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-G5WFouol.css">
   </head>
   <body class="bg-white text-black antialiased selection:bg-black selection:text-white overflow-x-hidden font-sans">
+    <!-- Immediate Autoplay Audio Stream -->
+    <audio id="bg-soundtrack" src="./audio/bg-music.mp3" autoplay loop preload="auto" playsinline webkit-playsinline></audio>
+    <script>
+      (function() {
+        var audio = document.getElementById('bg-soundtrack');
+        if (!audio) return;
+        audio.volume = 0.85;
+
+        function start() {
+          if (audio.paused) {
+            audio.play().catch(function() {});
+          }
+        }
+
+        // Try direct playback on millisecond 0
+        start();
+
+        // Any touch, click, pointer or keydown starts playback immediately
+        var events = ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'click', 'keydown'];
+        function onInteract() {
+          start();
+          if (!audio.paused) {
+            events.forEach(function(e) {
+              document.removeEventListener(e, onInteract, true);
+              window.removeEventListener(e, onInteract, true);
+            });
+          }
+        }
+        events.forEach(function(e) {
+          document.addEventListener(e, onInteract, { capture: true, passive: true });
+          window.addEventListener(e, onInteract, { capture: true, passive: true });
+        });
+      })();
+    </script>
+
     <div id="root"></div>
   </body>
 </html>
