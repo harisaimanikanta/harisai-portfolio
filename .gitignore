@@ -15,8 +15,9 @@ dist-ssr/
 .env.test.local
 .env.production.local
 
-# Large video assets (>100MB exceeds GitHub push limits)
+# Video assets
 Editing portfolio edits/
+web-optimized/
 *.mp4
 *.mov
 *.webm

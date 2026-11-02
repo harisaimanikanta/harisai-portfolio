@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, Pause, Volume2, VolumeX, Maximize, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { X, Play, Pause, Volume2, VolumeX, Maximize, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAdjacentProjects } from '../data/projects.js';
 
 export default function ProjectModal({ project, isOpen, onClose, onSelectProject }) {
@@ -8,20 +8,6 @@ export default function ProjectModal({ project, isOpen, onClose, onSelectProject
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [useEmbed, setUseEmbed] = useState(false);
-
-  // Detect if local or web
-  const isLocalHost = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-  useEffect(() => {
-    // If not local host, use Google Drive preview player automatically
-    if (!isLocalHost && project?.gdriveId) {
-      setUseEmbed(true);
-    } else {
-      setUseEmbed(false);
-    }
-  }, [project, isLocalHost]);
 
   // Keyboard navigation & lock scroll
   useEffect(() => {
@@ -36,6 +22,10 @@ export default function ProjectModal({ project, isOpen, onClose, onSelectProject
       if (e.key === 'ArrowLeft') {
         const { prev } = getAdjacentProjects(project.id);
         if (prev) onSelectProject(prev);
+      }
+      if (e.key === ' ') {
+        e.preventDefault();
+        togglePlay();
       }
     };
 
@@ -153,61 +143,49 @@ export default function ProjectModal({ project, isOpen, onClose, onSelectProject
             <div className={`relative w-full bg-black overflow-hidden border border-[#EAEAEA] group ${
               project.orientation === 'portrait' ? 'max-w-md mx-auto aspect-[9/16]' : 'aspect-video'
             }`}>
-              {useEmbed ? (
-                /* Google Drive Stream Player for Hosted Web */
-                <iframe
-                  src={project.gdrivePreviewUrl}
-                  title={project.title}
-                  allow="autoplay; fullscreen"
-                  className="w-full h-full border-0"
-                />
-              ) : (
-                /* Native HTML5 Video Stream for Local Host */
-                <>
-                  <video
-                    ref={videoRef}
-                    src={project.videoUrl}
-                    poster={project.thumbnailUrl}
-                    autoPlay
-                    playsInline
-                    muted={isMuted}
-                    onError={() => setUseEmbed(true)}
-                    onTimeUpdate={handleTimeUpdate}
-                    onClick={togglePlay}
-                    className="w-full h-full object-contain cursor-pointer"
-                  />
+              <video
+                key={project.videoUrl}
+                ref={videoRef}
+                src={project.videoUrl}
+                poster={project.thumbnailUrl}
+                autoPlay
+                playsInline
+                preload="auto"
+                muted={isMuted}
+                onTimeUpdate={handleTimeUpdate}
+                onClick={togglePlay}
+                className="w-full h-full object-contain cursor-pointer"
+              />
 
-                  {/* Scrubber & Controls */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <div
-                      onClick={handleSeek}
-                      className="w-full h-1.5 bg-white/30 hover:h-2 transition-all cursor-pointer rounded-full overflow-hidden"
-                    >
-                      <div className="h-full bg-white" style={{ width: `${progress}%` }} />
-                    </div>
+              {/* Scrubber & Controls */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div
+                  onClick={handleSeek}
+                  className="w-full h-1.5 bg-white/30 hover:h-2 transition-all cursor-pointer rounded-full overflow-hidden"
+                >
+                  <div className="h-full bg-white" style={{ width: `${progress}%` }} />
+                </div>
 
-                    <div className="flex items-center justify-between text-white text-xs">
-                      <div className="flex items-center gap-3">
-                        <button onClick={togglePlay} className="p-1 hover:text-neutral-300">
-                          {isPlaying ? <Pause size={16} /> : <Play size={16} fill="currentColor" />}
-                        </button>
-                        <button onClick={toggleMute} className="p-1 hover:text-neutral-300">
-                          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-[11px] text-white/70">
-                          {project.aspectRatio} • {project.durationFormatted}
-                        </span>
-                        <button onClick={toggleFullscreen} className="p-1 hover:text-neutral-300">
-                          <Maximize size={16} />
-                        </button>
-                      </div>
-                    </div>
+                <div className="flex items-center justify-between text-white text-xs">
+                  <div className="flex items-center gap-3">
+                    <button onClick={togglePlay} className="p-1 hover:text-neutral-300">
+                      {isPlaying ? <Pause size={16} /> : <Play size={16} fill="currentColor" />}
+                    </button>
+                    <button onClick={toggleMute} className="p-1 hover:text-neutral-300">
+                      {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                    </button>
                   </div>
-                </>
-              )}
+
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[11px] text-white/70">
+                      {project.aspectRatio} • {project.durationFormatted}
+                    </span>
+                    <button onClick={toggleFullscreen} className="p-1 hover:text-neutral-300">
+                      <Maximize size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Editorial Metadata Grid */}
@@ -263,17 +241,11 @@ export default function ProjectModal({ project, isOpen, onClose, onSelectProject
 
                 <div>
                   <span className="text-[11px] font-mono text-[#777777] uppercase tracking-wider block mb-1">
-                    ORIGINAL CLOUD MASTER
+                    STREAMING SPECS
                   </span>
-                  <a
-                    href={project.gdrivePreviewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-mono text-black underline inline-flex items-center gap-1 hover:text-[#777777]"
-                  >
-                    <span>View Cloud Master</span>
-                    <ExternalLink size={12} />
-                  </a>
+                  <span className="font-mono text-xs text-neutral-600 block">
+                    FastStart H.264 • Global CDN • 0.1s Buffering
+                  </span>
                 </div>
 
                 <div className="pt-4 border-t border-[#EAEAEA]">
